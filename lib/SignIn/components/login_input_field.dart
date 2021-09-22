@@ -13,7 +13,7 @@ class LoginInput extends StatelessWidget {
       {@required this.hint,
       @required this.icon,
       this.isPasswordFormat = false,
-      this.inputType = TextInputType.text});
+      this.inputType = TextInputType.text,});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class LoginInput extends StatelessWidget {
       borderType: BorderType.RRect,
       radius: Radius.circular(50),
       strokeWidth: 4,
-      strokeCap: StrokeCap.butt,
+      strokeCap: StrokeCap.round,
       dashPattern: [size.width * 0.3, 8, size.width * 0.5, 24],
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -36,6 +36,7 @@ class LoginInput extends StatelessWidget {
           cursorColor: kDarkAccentColor,
           keyboardType: inputType,
           obscureText: isPasswordFormat,
+          autofocus: inputType == TextInputType.text,
           decoration: InputDecoration(
             icon: Icon(
               icon,

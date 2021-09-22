@@ -1,4 +1,3 @@
-import 'package:conca/SignIn/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -31,8 +30,8 @@ class _SignUpState extends State<SignUp> {
                     fontWeight: FontWeight.w800,
                     foreground: Paint()
                       ..style = PaintingStyle.stroke
-                      ..strokeWidth = 3
-                      ..color = Colors.black38,
+                      ..strokeWidth = 6
+                      ..color = Colors.transparent,
                   ),
                 ),
                 Text(
@@ -86,7 +85,7 @@ class _SignUpState extends State<SignUp> {
                     style: TextStyle(
                       fontFamily: 'Balsamiq',
                       color: kGearOrange,
-                      fontSize: 20,
+                      fontSize: 16,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -95,8 +94,7 @@ class _SignUpState extends State<SignUp> {
                           MaterialStateProperty.all(Colors.transparent),
                       elevation: MaterialStateProperty.all(0)),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));
+                    Navigator.pop(context);
                   },
                 ),
               ],

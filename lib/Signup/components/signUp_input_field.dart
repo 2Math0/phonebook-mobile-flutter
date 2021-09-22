@@ -19,11 +19,11 @@ class SignUpInput extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return DottedBorder(
-      color: kGearDarkGrey,
+      color: Colors.black38,
       borderType: BorderType.RRect,
       radius: Radius.circular(50),
       strokeWidth: 4,
-      strokeCap: StrokeCap.butt,
+      strokeCap: StrokeCap.round,
       dashPattern: [size.width * 0.3, 8, size.width * 0.5, 24],
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -36,10 +36,11 @@ class SignUpInput extends StatelessWidget {
           cursorColor: kGearOrange,
           keyboardType: inputType,
           obscureText: isPasswordFormat,
+          autofocus: inputType == TextInputType.text,
           decoration: InputDecoration(
             icon: Icon(
               icon,
-              color:kGearDarkGrey,
+              color:kGearOrange,
             ),
             hintText: hint,
             hintStyle: TextStyle(color: Colors.black38),
