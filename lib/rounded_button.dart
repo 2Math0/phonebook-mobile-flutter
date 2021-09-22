@@ -8,7 +8,7 @@ class RoundedButton extends StatelessWidget {
   const RoundedButton({
     this.text,
     this.press,
-    this.color = kDarkAccentColor,
+    this.color,
     this.textColor = Colors.white,
   });
 

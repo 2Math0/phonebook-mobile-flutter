@@ -1,17 +1,18 @@
-import 'package:conca/Signup/SignUpPage.dart';
-import 'package:conca/constants.dart';
-import 'package:conca/rounded_button.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:conca/SignIn/LoginPage.dart';
 import 'package:flutter/material.dart';
-import 'components/background_signUp.dart';
-import 'components/login_input_field.dart';
+import 'package:flutter_svg/svg.dart';
 
-class LoginPage extends StatefulWidget {
+import '../constants.dart';
+import '../rounded_button.dart';
+import 'components/background_signUp.dart';
+import 'components/signUp_input_field.dart';
+
+class SignUp extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Background(
@@ -23,24 +24,22 @@ class _LoginPageState extends State<LoginPage> {
             Stack(
               children: <Widget>[
                 Text(
-                  'LOG IN',
+                  'Sign Up',
                   style: TextStyle(
                     fontSize: 48,
                     fontFamily: 'Balsamiq',
                     fontWeight: FontWeight.w800,
                     foreground: Paint()
                       ..style = PaintingStyle.stroke
-                      ..strokeWidth = 0.8
-                      ..color = Colors.black
-                      ..strokeCap = StrokeCap.butt,
-
+                      ..strokeWidth = 3
+                      ..color = Colors.black38,
                   ),
                 ),
                 Text(
-                  'LOG IN',
+                  'Sign Up',
                   style: TextStyle(
                     fontSize: 48,
-                    color: kDarkAccentColor,
+                    color: kGearOrange,
                     fontFamily: 'Balsamiq',
                     fontWeight: FontWeight.w800,
                   ),
@@ -48,34 +47,34 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             SvgPicture.asset(
-              'assets/images/shield.svg',
+              'assets/images/gear.svg',
               alignment: Alignment.center,
               width: MediaQuery.of(context).size.width * 0.5,
             ),
             SizedBox(
               height: 60,
             ),
-            LoginInput(
+            SignUpInput(
                 hint: 'E-mail',
                 icon: Icons.person,
                 inputType: TextInputType.emailAddress),
             SizedBox(
               height: 40,
             ),
-            LoginInput(
+            SignUpInput(
                 hint: 'Password', icon: Icons.lock, isPasswordFormat: true),
             SizedBox(
               height: 40,
             ),
             RoundedButton(
-              text: 'Log In',
-              color: kDarkAccentColor,
+              text: 'Sign Up',
+              color: kGearOrange,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Not Signed in ?',
+                  'Already Signed Up ?',
                   style: TextStyle(
                       fontSize: 16,
                       color: Colors.black,
@@ -83,10 +82,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 ElevatedButton(
                   child: Text(
-                    'Sign up',
+                    'Log In',
                     style: TextStyle(
                       fontFamily: 'Balsamiq',
-                      color: kSemiDarkAccentColor,
+                      color: kGearOrange,
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
                     ),
@@ -97,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                       elevation: MaterialStateProperty.all(0)),
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SignUp()));
+                        MaterialPageRoute(builder: (context) => LoginPage()));
                   },
                 ),
               ],
