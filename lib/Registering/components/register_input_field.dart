@@ -3,18 +3,25 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 
-class SignUpInput extends StatelessWidget {
+class RegisterInput extends StatefulWidget {
   final String hint;
   final IconData icon;
-  final bool isPasswordFormat;
   final TextInputType inputType;
+  final bool isPasswordFormat;
+  final TextEditingController textController;
 
-  const SignUpInput(
+  const RegisterInput(
       {@required this.hint,
       @required this.icon,
+      this.inputType = TextInputType.text,
       this.isPasswordFormat = false,
-      this.inputType = TextInputType.text});
+        this.textController});
+  @override
+  _RegisterInputState createState() => _RegisterInputState();
+}
 
+class _RegisterInputState extends State<RegisterInput> {
+  bool hidePassword = false;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -34,15 +41,27 @@ class SignUpInput extends StatelessWidget {
         ),
         child: TextField(
           cursorColor: kGearOrange,
-          keyboardType: inputType,
-          obscureText: isPasswordFormat,
-          autofocus: inputType == TextInputType.text,
+          keyboardType: widget.inputType,
+          obscureText: hidePassword,
+          autofocus: !widget.isPasswordFormat,
+          controller: widget.textController,
           decoration: InputDecoration(
-            icon: Icon(
-              icon,
-              color:kGearOrange,
+            prefixIcon: Icon(
+              widget.icon,
+              color: kGearOrange,
             ),
-            hintText: hint,
+            suffixIcon: widget.isPasswordFormat
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        hidePassword = !hidePassword;
+                      });
+                    },
+                    icon: Icon(hidePassword ? Icons.visibility : Icons.visibility_off),
+                    color: kGearOrange.withOpacity(!hidePassword ? 0.4 : 1),
+                  )
+                : null,
+            hintText: widget.hint,
             hintStyle: TextStyle(color: Colors.black38),
             border: InputBorder.none,
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'SignIn/LoginPage.dart';
+
+import 'LogIN/LoginPage.dart';
 
 void main() {
   runApp(MyApp());

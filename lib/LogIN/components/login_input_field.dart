@@ -3,18 +3,25 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 
-class LoginInput extends StatelessWidget {
+class LoginInput extends StatefulWidget {
   final String hint;
   final IconData icon;
   final bool isPasswordFormat;
   final TextInputType inputType;
+  final TextEditingController textController;
 
   const LoginInput(
       {@required this.hint,
       @required this.icon,
       this.isPasswordFormat = false,
-      this.inputType = TextInputType.text,});
+      this.inputType = TextInputType.text, this.textController});
 
+  @override
+  _LoginInputState createState() => _LoginInputState();
+}
+
+class _LoginInputState extends State<LoginInput> {
+  bool hidePassword = false;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -34,15 +41,28 @@ class LoginInput extends StatelessWidget {
         ),
         child: TextField(
           cursorColor: kDarkAccentColor,
-          keyboardType: inputType,
-          obscureText: isPasswordFormat,
-          autofocus: inputType == TextInputType.text,
+          keyboardType: widget.inputType,
+          obscureText: hidePassword,
+          autofocus: !widget.isPasswordFormat,
+          controller: widget.textController,
           decoration: InputDecoration(
-            icon: Icon(
-              icon,
+            prefixIcon: Icon(
+              widget.icon,
               color: Colors.black,
             ),
-            hintText: hint,
+            suffixIcon: widget.isPasswordFormat
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        hidePassword = !hidePassword;
+                      });
+                    },
+                    icon: Icon(
+                        hidePassword ? Icons.visibility : Icons.visibility_off),
+                    color: Colors.black.withOpacity(!hidePassword ? 0.4 : 1),
+                  )
+                : null,
+            hintText: widget.hint,
             hintStyle: TextStyle(color: Colors.black38),
             border: InputBorder.none,
           ),
