@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:conca/LogIN/LoginPage.dart';
+import 'package:conca/widgets/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -138,7 +139,11 @@ class _RegisterState extends State<Register> {
     var jsonResponse;
     var response = await http.post(
         Uri.parse("https://phonebook-be.herokuapp.com/api/register"),
-        body: data);
+        body: json.encode(data),
+      headers: {
+        "content-type": "application/json",
+        "accept": "application/json",
+      },);
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       print(jsonResponse);

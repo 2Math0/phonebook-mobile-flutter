@@ -31,7 +31,8 @@ dependencies:
   flutter_svg: ^0.22.0
   dotted_border: ^2.0.0+1
   http: ^0.13.3
-  shared_preferences: ^0.5.12
+  shared_preferences: ^2.0.7
+  mdi: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:conca/contacts.dart';
 import 'package:http/http.dart' as http;
 import 'package:conca/Registering/RegisterPage.dart';
 import 'package:conca/constants.dart';
@@ -26,7 +27,10 @@ class _LoginPageState extends State<LoginPage> {
     return Background(
       child: SingleChildScrollView(
         child: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Center(
+                child: CircularProgressIndicator(
+                valueColor: new AlwaysStoppedAnimation<Color>(kDarkAccentColor),
+              ))
             : Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,32 +64,35 @@ class _LoginPageState extends State<LoginPage> {
                   SvgPicture.asset(
                     'assets/images/shield.svg',
                     alignment: Alignment.center,
-                    width: size.width < 600 ? (size.width * 0.5).roundToDouble() : 300,
+                    width: size.width < 600
+                        ? (size.width * 0.5).roundToDouble()
+                        : 300,
                   ),
                   SizedBox(
                     height: 60,
                   ),
                   LoginInput(
-                      hint: 'E-mail',
-                      icon: Icons.person,
-                      inputType: TextInputType.emailAddress,
+                    hint: 'E-mail',
+                    icon: Icons.person,
+                    inputType: TextInputType.emailAddress,
                     textController: emailController,
                   ),
                   SizedBox(
                     height: 40,
                   ),
                   LoginInput(
-                      hint: 'Password',
-                      icon: Icons.lock,
-                      isPasswordFormat: true,
-                  textController: passwordController,),
+                    hint: 'Password',
+                    icon: Icons.lock,
+                    isPasswordFormat: true,
+                    textController: passwordController,
+                  ),
                   SizedBox(
                     height: 40,
                   ),
                   RoundedButton(
                     text: 'Log In',
                     color: kDarkAccentColor,
-                    press: (){
+                    press: () {
                       print("Login pressed");
                       setState(() {
                         _isLoading = true;
@@ -132,13 +139,18 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  loginCore(String mobile, pass) async {
+  loginCore(String email, String pass) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    Map data = {'mobile': mobile, 'password': pass};
-    var jsonResponse = null;
+    Map data = {"email": '$email', "password": "$pass"};
+    var jsonResponse;
     var response = await http.post(
-        Uri.parse("https://phonebook-be.herokuapp.com/api/login"),
-        body: data);
+      Uri.parse("https://phonebook-be.herokuapp.com/api/login"),
+      body: json.encode(data),
+      headers: {
+        "content-type": "application/json",
+        "accept": "application/json",
+      },
+    );
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       print(jsonResponse);
@@ -146,14 +158,18 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           _isLoading = false;
         });
-        sharedPreferences.setString("token", jsonResponse['data']['token']);
+        sharedPreferences.setString("token", jsonResponse['token']);
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (BuildContext context) => Register()),
+            MaterialPageRoute(
+                builder: (BuildContext context) => ContactsPage()),
             (Route<dynamic> route) => false);
       }
     } else {
       setState(() {
         _isLoading = false;
+        print(response.statusCode);
+        print(pass);
+        print(data);
       });
       errorMsg = response.body;
       print("The error message is: ${response.body}");
