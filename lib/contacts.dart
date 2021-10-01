@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:conca/Contacts/alpha_icons_generator.dart';
 import 'package:conca/constants.dart';
+import 'package:conca/contact_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -15,6 +16,7 @@ class ContactsPage extends StatefulWidget {
 
 class _ContactsPageState extends State<ContactsPage> {
   List _contactsList = [];
+
   @override
   void initState() {
     _fetchData();
@@ -29,19 +31,20 @@ class _ContactsPageState extends State<ContactsPage> {
           child: ListView.builder(
             padding: EdgeInsets.all(6),
             itemBuilder: (BuildContext context, i) {
+              Color tileIconColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
                   leading: Icon(
                     mdiIcons[
                         _contactsList[i]['name'][0].toString().toUpperCase()],
-                    color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+                    color:tileIconColor,
                     size: MediaQuery.of(context).size.width * 0.15,
                   ),
                   title: Padding(
-                    padding: const EdgeInsets.fromLTRB(12,12,0,0),
+                    padding: const EdgeInsets.fromLTRB(12, 12, 0, 0),
                     child: Text(
-                        _contactsList[i]['name'],
+                      _contactsList[i]['name'],
                       softWrap: true,
                       style: TextStyle(
                         fontFamily: 'Balsamiq',
@@ -51,7 +54,7 @@ class _ContactsPageState extends State<ContactsPage> {
                     ),
                   ),
                   subtitle: Padding(
-                    padding: EdgeInsets.fromLTRB(20,0,0,0),
+                    padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                     child: Text(
                       _contactsList[i]['phones'][0]['value'],
                       softWrap: true,
@@ -63,14 +66,22 @@ class _ContactsPageState extends State<ContactsPage> {
                       ),
                     ),
                   ),
-                  onTap: (){},
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => ContactCard(
+                              contactDetails: _contactsList[i],
+                              mainIconColor: tileIconColor,
+                            )));
+                  },
                   contentPadding: EdgeInsets.all(8),
-                  onLongPress: (){},
+                  onLongPress: () {},
                   trailing: CupertinoButton(
-                    child: Icon(Icons.call,
-                    color: kSemiDarkAccentColor,
-                    size: 32,),
-                    onPressed: (){
+                    child: Icon(
+                      Icons.call,
+                      color: tileIconColor,
+                      size: 32,
+                    ),
+                    onPressed: () {
                       print(_contactsList[i]['id']);
                     },
                   ),
@@ -82,10 +93,15 @@ class _ContactsPageState extends State<ContactsPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.person_add, color: Colors.white,),
+        child: Icon(
+          Icons.person_add,
+          color: Colors.white,
+        ),
         backgroundColor: kDarkAccentColor,
         materialTapTargetSize: MaterialTapTargetSize.padded,
-        onPressed: () {_fetchData();},
+        onPressed: () {
+          _fetchData();
+        },
       ),
     );
   }

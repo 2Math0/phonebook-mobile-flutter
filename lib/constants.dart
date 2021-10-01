@@ -8,3 +8,7 @@ const kGearYellow = Color(0xFFffda44);
 const kGearOrange = Color(0xFFff9100);
 const kGearGrey = Color(0xFFe1ebf0);
 const kGearDarkGrey = Color(0xFFb4d2d7);
+const kNormalTextStyle = TextStyle(
+  fontSize: 18,
+  fontFamily: 'Balsamiq',
+);
