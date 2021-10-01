@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:math' as math;
-import 'package:conca/LogIN/LoginPage.dart';
+import 'package:conca/contacts.dart';
 import 'package:conca/widgets/rounded_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -62,7 +63,7 @@ class _RegisterState extends State<Register> {
                   SvgPicture.asset(
                     'assets/images/gear.svg',
                     alignment: Alignment.center,
-                    width: size.width < 600 ? (size.width * 0.5).round() : 300,
+                    width: size.width < 600 ? (size.width * 0.5).roundToDouble() : 300,
                   ),
                   SizedBox(
                     height: 60,
@@ -153,7 +154,7 @@ class _RegisterState extends State<Register> {
         });
         sharedPreferences.setString("token", jsonResponse['token']);
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
+            MaterialPageRoute(builder: (BuildContext context) => ContactsPage()),
             (Route<dynamic> route) => false);
       }
     } else {

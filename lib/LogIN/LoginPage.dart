@@ -20,7 +20,24 @@ class _LoginPageState extends State<LoginPage> {
   var errorMsg;
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
-
+  @override
+  void initState(){
+    Future.delayed(Duration.zero,()async{
+      _isLoading = true;
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance() ;
+      String token = sharedPreferences.getString('token');
+      if (token!=null){
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (BuildContext context) => ContactsPage()),
+                (Route<dynamic> route) => false);
+      }
+      else{
+        _isLoading = false;
+      }
+    });
+      super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
