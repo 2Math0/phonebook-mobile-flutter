@@ -1,6 +1,7 @@
 import 'package:mdi/mdi.dart';
 
 Map<String, dynamic> mdiIcons = {
+  'null' : Mdi.circleOutline,
   'A': Mdi.alphaACircle,
   'B': Mdi.alphaBCircle,
   'C': Mdi.alphaCCircle,

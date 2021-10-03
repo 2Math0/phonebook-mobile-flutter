@@ -17,7 +17,7 @@ class ContactCard extends StatelessWidget {
             children: <Widget>[
               Center(
                 child: Icon(
-                  mdiIcons[contactDetails['name'][0]],
+                  mdiIcons[contactDetails['name'][0].toString().toUpperCase()],
                   size: 160,
                   color: mainIconColor,
                 ),

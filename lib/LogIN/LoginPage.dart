@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:conca/contacts.dart';
+import 'package:conca/widgets/snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:conca/Registering/RegisterPage.dart';
 import 'package:conca/constants.dart';
@@ -17,38 +18,47 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
+  int catcher = 0;
   var errorMsg;
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
   @override
   void initState() {
     super.initState();
-      Future.delayed(Duration.zero,()async{
-        _isLoading = true;
-        SharedPreferences sharedPreferences = await SharedPreferences.getInstance() ;
-        String token = sharedPreferences.getString('token');
-        if (token!=null){
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (BuildContext context) => ContactsPage()),
-                  (Route<dynamic> route) => false);
-        }
-        else{
+    _isLoading = true;
+    Future.delayed(Duration.zero, () async {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String token = sharedPreferences.getString('token');
+      if (token != null) {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (BuildContext context) => ContactsPage()),
+            (Route<dynamic> route) => false);
+      }
+      else{
+        setState(() {
           _isLoading = false;
-        }
-      });
+        });
+      }
+    });
+
   }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Background(
-      child: SingleChildScrollView(
-        child: _isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                valueColor: new AlwaysStoppedAnimation<Color>(kDarkAccentColor),
-              ))
-            : Column(
+    if (_isLoading) {
+      catcher+=1;
+      return Center(
+            child: CircularProgressIndicator(
+            valueColor: new AlwaysStoppedAnimation<Color>(kDarkAccentColor),
+          ));
+    }
+    else{
+      return Background(
+            child: SingleChildScrollView(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -150,10 +160,16 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
+                  // catcher>= 2 ? SnackBarCustom(
+                  //   bg: Colors.black87,
+                  //   message: errorMsg,
+                  //   borderColor: kAccentColor,
+                  // ) : SizedBox(height: 0,)
                 ],
               ),
-      ),
-    );
+            ),
+          );
+  }
   }
 
   loginCore(String email, String pass) async {
@@ -184,12 +200,8 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       setState(() {
         _isLoading = false;
-        print(response.statusCode);
-        print(pass);
-        print(data);
       });
       errorMsg = response.body;
-      print("The error message is: ${response.body}");
     }
   }
 }
