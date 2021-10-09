@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 import 'package:conca/contacts.dart';
 import 'package:conca/widgets/rounded_button.dart';
+import 'package:conca/widgets/snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,6 +20,7 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   bool _isLoading = false;
+  final signUpKey = GlobalKey<FormState>();
   var errorMsg;
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
@@ -63,40 +65,81 @@ class _RegisterState extends State<Register> {
                   SvgPicture.asset(
                     'assets/images/gear.svg',
                     alignment: Alignment.center,
-                    width: size.width < 600 ? (size.width * 0.5).roundToDouble() : 300,
+                    width: size.width < 600
+                        ? (size.width * 0.5).roundToDouble()
+                        : 300,
                   ),
                   SizedBox(
                     height: 60,
                   ),
-                  RegisterInput(
-                    hint: 'E-mail',
-                    icon: Icons.person,
-                    inputType: TextInputType.emailAddress,
-                    textController: emailController,
-                    isPasswordFormat: false,
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  RegisterInput(
-                    hint: 'Password',
-                    icon: Icons.lock,
-                    isPasswordFormat: true,
-                    textController: passwordController,
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  RoundedButton(
-                    text: 'Sign Up',
-                    color: kGearOrange,
-                    press: () {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      registerCore(
-                          emailController.text, passwordController.text);
-                    },
+                  Form(
+                    key: signUpKey,
+                    child: Column(
+                      children: <Widget>[
+                        RegisterInput(
+                          hint: 'E-mail',
+                          icon: Icons.person,
+                          inputType: TextInputType.emailAddress,
+                          textController: emailController,
+                          isPasswordFormat: false,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please Enter Email';
+                            } else if (!value.contains('@')) {
+                              return 'Enter a valid email Format like example@example.com';
+                            }
+                            return '';
+                          },
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        RegisterInput(
+                          hint: 'Password',
+                          icon: Icons.lock,
+                          isPasswordFormat: true,
+                          textController: passwordController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please Enter Password';
+                            } else if (value.length < 8) {
+                              return 'the Password must be more than 8 characters';
+                            }
+                            return '';
+                          },
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        RoundedButton(
+                          text: 'Sign Up',
+                          color: kGearOrange,
+                          press: () {
+                            if (signUpKey.currentState.validate()) {
+                              setState(() {
+                                _isLoading = true;
+                                Future.delayed(Duration(seconds: 12), () {
+                                  if (_isLoading == true) {
+                                    _isLoading = false;
+                                    snackBarCustom(context, Colors.white,
+                                        Colors.transparent, 'time out');
+                                  }
+                                });
+                              });
+                              registerCore(emailController.text,
+                                  passwordController.text);
+                            } else {
+                              snackBarCustom(
+                                  context,
+                                  kGearGrey,
+                                  Colors.black.withOpacity(0.6),
+                                  'Enter a valid email and 8 password characters at least',
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -136,15 +179,16 @@ class _RegisterState extends State<Register> {
 
   registerCore(String email, pass) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    Map data = {'email': email, 'password': pass, 'name': getRandomString(5)};
+    Map data = {'email': email, 'password': pass, 'name': getRandomString(7)};
     var jsonResponse;
     var response = await http.post(
-        Uri.parse("https://phonebook-be.herokuapp.com/api/register"),
-        body: json.encode(data),
+      Uri.parse("https://phonebook-be.herokuapp.com/api/register"),
+      body: json.encode(data),
       headers: {
         "content-type": "application/json",
         "accept": "application/json",
-      },);
+      },
+    );
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       print(jsonResponse);
@@ -154,20 +198,26 @@ class _RegisterState extends State<Register> {
         });
         sharedPreferences.setString("token", jsonResponse['token']);
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (BuildContext context) => ContactsPage()),
+            MaterialPageRoute(
+                builder: (BuildContext context) => ContactsPage()),
             (Route<dynamic> route) => false);
       }
     } else {
+      errorMsg = response.body;
       setState(() {
+        snackBarCustom(
+            context,
+            kGearGrey,
+            Colors.black.withOpacity(0.6), errorMsg.toString());
         _isLoading = false;
       });
-      errorMsg = response.body;
       print("The error message is: ${response.body} ${emailController.text}");
     }
   }
 }
 
-const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+const _chars =
+    'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890 ';
 math.Random _rnd = math.Random();
 String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
     length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));

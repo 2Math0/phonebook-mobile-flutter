@@ -8,13 +8,14 @@ class RegisterInput extends StatefulWidget {
   final TextInputType inputType;
   final bool isPasswordFormat;
   final TextEditingController textController;
+  final String Function(String) validator;
 
   const RegisterInput(
       {@required this.hint,
       @required this.icon,
       this.inputType = TextInputType.text,
       this.isPasswordFormat = false,
-      this.textController});
+      this.textController, this.validator});
   @override
   _RegisterInputState createState() => _RegisterInputState();
 }
@@ -26,14 +27,15 @@ class _RegisterInputState extends State<RegisterInput> {
     Size size = MediaQuery.of(context).size;
     return InputDottedBorder(
       random: stepOneIgnoreOne(randomDoubles(), size.width),
-      borderColor: Colors.black54,
+      borderColor: Colors.black.withOpacity(0.6),
       background: kGearYellow,
-      myChild: TextField(
+      myChild: TextFormField(
         cursorColor: kGearOrange,
         keyboardType: widget.inputType,
         obscureText: hidePassword,
         autofocus: !widget.isPasswordFormat,
         controller: widget.textController,
+        validator: widget.validator,
         decoration: InputDecoration(
           prefixIcon: Icon(
             widget.icon,

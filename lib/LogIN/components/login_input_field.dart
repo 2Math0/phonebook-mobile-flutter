@@ -8,13 +8,14 @@ class LoginInput extends StatefulWidget {
   final bool isPasswordFormat;
   final TextInputType inputType;
   final TextEditingController textController;
+  final String Function(String) validator;
 
   const LoginInput(
       {@required this.hint,
       @required this.icon,
       this.isPasswordFormat = false,
       this.inputType = TextInputType.text,
-      this.textController});
+      this.textController, this.validator});
 
   @override
   _LoginInputState createState() => _LoginInputState();
@@ -29,12 +30,13 @@ class _LoginInputState extends State<LoginInput> {
       background: kAccentColor,
       borderColor: Colors.black,
       random: stepOneIgnoreOne(randomDoubles(), size.width),
-      myChild: TextField(
+      myChild: TextFormField(
         cursorColor: kDarkAccentColor,
         keyboardType: widget.inputType,
         obscureText: hidePassword,
-        autofocus: !widget.isPasswordFormat,
+        // autofocus: !widget.isPasswordFormat,
         controller: widget.textController,
+        validator: widget.validator,
         decoration: InputDecoration(
           prefixIcon: Icon(
             widget.icon,
@@ -56,7 +58,7 @@ class _LoginInputState extends State<LoginInput> {
           hintStyle: TextStyle(color: Colors.black38),
           border: InputBorder.none,
         ),
-        style: TextStyle(color: Colors.black, fontSize: 18),
+        style: kNormalTextStyle,
       ),
     );
   }

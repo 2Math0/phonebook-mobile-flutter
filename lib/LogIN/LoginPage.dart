@@ -18,14 +18,14 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
-  int catcher = 0;
+  final loginKey = GlobalKey<FormState>();
   var errorMsg;
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
   @override
   void initState() {
     super.initState();
-    _isLoading = true;
+    // _isLoading = true;
     Future.delayed(Duration.zero, () async {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
@@ -35,141 +35,171 @@ class _LoginPageState extends State<LoginPage> {
             MaterialPageRoute(
                 builder: (BuildContext context) => ContactsPage()),
             (Route<dynamic> route) => false);
-      }
-      else{
+      } else {
         setState(() {
           _isLoading = false;
         });
       }
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     if (_isLoading) {
-      catcher+=1;
       return Center(
-            child: CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(kDarkAccentColor),
-          ));
-    }
-    else{
+          child: CircularProgressIndicator(
+        valueColor: new AlwaysStoppedAnimation<Color>(kDarkAccentColor),
+      ));
+    } else {
       return Background(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
+          child: SingleChildScrollView(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Stack(
                 children: <Widget>[
-                  Stack(
-                    children: <Widget>[
-                      Text(
-                        'LOG IN',
-                        style: TextStyle(
-                          fontSize: 48,
-                          fontFamily: 'Balsamiq',
-                          fontWeight: FontWeight.w800,
-                          foreground: Paint()
-                            ..style = PaintingStyle.stroke
-                            ..strokeWidth = 0.8
-                            ..color = Colors.black
-                            ..strokeCap = StrokeCap.butt,
-                        ),
-                      ),
-                      Text(
-                        'LOG IN',
-                        style: TextStyle(
-                          fontSize: 48,
-                          color: kDarkAccentColor,
-                          fontFamily: 'Balsamiq',
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'LOG IN',
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontFamily: 'Balsamiq',
+                      fontWeight: FontWeight.w800,
+                      foreground: Paint()
+                        ..style = PaintingStyle.stroke
+                        ..strokeWidth = 0.8
+                        ..color = Colors.black
+                        ..strokeCap = StrokeCap.butt,
+                    ),
                   ),
-                  SvgPicture.asset(
-                    'assets/images/shield.svg',
-                    alignment: Alignment.center,
-                    width: size.width < 600
-                        ? (size.width * 0.5).roundToDouble()
-                        : 300,
+                  Text(
+                    'LOG IN',
+                    style: TextStyle(
+                      fontSize: 48,
+                      color: kDarkAccentColor,
+                      fontFamily: 'Balsamiq',
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                  SizedBox(
-                    height: 60,
-                  ),
-                  LoginInput(
-                    hint: 'E-mail',
-                    icon: Icons.person,
-                    inputType: TextInputType.emailAddress,
-                    textController: emailController,
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  LoginInput(
-                    hint: 'Password',
-                    icon: Icons.lock,
-                    isPasswordFormat: true,
-                    textController: passwordController,
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  RoundedButton(
-                    text: 'Log In',
-                    color: kDarkAccentColor,
-                    press: () {
-                      print("Login pressed");
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      loginCore(emailController.text, passwordController.text);
-                    },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Not Signed in ?',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      ElevatedButton(
-                        child: Text(
-                          'Sign up',
-                          style: TextStyle(
-                            fontFamily: 'Balsamiq',
-                            color: kSemiDarkAccentColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.transparent),
-                            elevation: MaterialStateProperty.all(0)),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Register()));
-                        },
-                      ),
-                    ],
-                  ),
-                  // catcher>= 2 ? SnackBarCustom(
-                  //   bg: Colors.black87,
-                  //   message: errorMsg,
-                  //   borderColor: kAccentColor,
-                  // ) : SizedBox(height: 0,)
                 ],
               ),
-            ),
-          );
-  }
+              SvgPicture.asset(
+                'assets/images/shield.svg',
+                alignment: Alignment.center,
+                width:
+                    size.width < 600 ? (size.width * 0.5).roundToDouble() : 300,
+              ),
+              SizedBox(
+                height: 60,
+              ),
+              Form(
+                key: loginKey,
+                child: Column(
+                  children: [
+                    LoginInput(
+                      hint: 'E-mail',
+                      icon: Icons.person,
+                      inputType: TextInputType.emailAddress,
+                      textController: emailController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please Enter Email';
+                        } else if (!value.contains('@')) {
+                          return 'Enter a valid email Format like example@example.com';
+                        }
+                        return '';
+                      },
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    LoginInput(
+                      hint: 'Password',
+                      icon: Icons.lock,
+                      isPasswordFormat: true,
+                      textController: passwordController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please Enter Password';
+                        } else if (value.length < 8) {
+                          return 'the Password must be more than 8 characters';
+                        }
+                        return '';
+                      },
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+
+            ]),),
+                    RoundedButton(
+                      text: 'Log In',
+                      color: kDarkAccentColor,
+                      press: () {
+                        print("Login pressed");
+                        if (loginKey.currentState.validate()) {
+                          setState(() {
+                            _isLoading = true;
+                            Future.delayed(Duration(seconds: 12), () {
+                              if (_isLoading == true) {
+                                _isLoading = false;
+                                snackBarCustom(context,
+                                    kAccentColor,
+                                    Colors.transparent, 'time out');
+                              }
+                            });
+                          });
+                          loginCore(
+                              emailController.text, passwordController.text);
+                        } else {
+                          snackBarCustom(
+                              context,
+                              kAccentColor,
+                              Colors.black87,
+                              'Enter a valid email and 8 password characters at least',
+
+                          );
+                        }
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Not Signed in ?',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        ElevatedButton(
+                          child: Text(
+                            'Sign up',
+                            style: TextStyle(
+                              fontFamily: 'Balsamiq',
+                              color: kSemiDarkAccentColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.transparent),
+                              elevation: MaterialStateProperty.all(0)),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Register()));
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+      ));
+    }
   }
 
   loginCore(String email, String pass) async {
@@ -198,10 +228,15 @@ class _LoginPageState extends State<LoginPage> {
             (Route<dynamic> route) => false);
       }
     } else {
+      errorMsg = response.body;
       setState(() {
+        snackBarCustom(
+            context,
+            kSemiDarkAccentColor,
+            Colors.black87,
+            errorMsg.toString());
         _isLoading = false;
       });
-      errorMsg = response.body;
     }
   }
 }

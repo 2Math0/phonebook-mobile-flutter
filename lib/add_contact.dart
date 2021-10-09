@@ -150,12 +150,12 @@ class _ContactADDState extends State<ContactADD> {
   }
 
   Future<ContactModel> uploadContact(
-      String name, String email, phones, String notes) async {
+      String name, String email, String phones, String notes) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     var jsonBody = {
-      'name': name,
       'email': email,
+      'name': name,
       'notes': notes,
       'phones': [
         {'value' : phones,
@@ -169,7 +169,7 @@ class _ContactADDState extends State<ContactADD> {
         },
         body: json.encode(jsonBody));
     print(jsonBody);
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return ContactModel.fromJson(jsonDecode(response.body));
     } else {
       print("The error message is: ${response.body}");

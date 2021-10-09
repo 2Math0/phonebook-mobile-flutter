@@ -1,19 +1,20 @@
 import 'package:conca/constants.dart';
 import 'package:flutter/material.dart';
 
-
-class SnackBarCustom extends StatelessWidget {
-  final Color borderColor;
-  final String message;
-  final Color bg;
-
-  const SnackBarCustom({this.borderColor, this.message, this.bg});
-  @override
-  Widget build(BuildContext context) {
-    return SnackBar(
+void snackBarCustom(
+    BuildContext context, Color bg, Color borderColor, String message, {Color textColor=Colors.black}) {
+  final scaffold = ScaffoldMessenger.of(context);
+  scaffold.showSnackBar(
+    SnackBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
+      duration: Duration(seconds: 5),
       content: Container(
+        alignment: Alignment.topCenter,
+          constraints: BoxConstraints(
+            maxHeight: 100,
+            minHeight: 50,
+          ),
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: bg,
@@ -26,21 +27,20 @@ class SnackBarCustom extends StatelessWidget {
                 offset: Offset(2, 4),
               )
             ],
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Row(
-            children: [
+          child:
               Padding(
-                padding: EdgeInsets.only(left: 8.0),
-                child: Text(
-                  message,
-                  style: kNormalTextStyle.copyWith(color: borderColor),
+                padding: EdgeInsets.only(left: 8.0,right: 8.0),
+                child: Center(
+                  child: Text(
+                    message,
+                    softWrap: true,
+                    style: kNormalTextStyle.copyWith(color: textColor),
+                  ),
                 ),
               ),
-              const Spacer(),
-            ],
-          )
-      ),
-    );
-  }
+          ),
+    ),
+  );
 }
