@@ -88,7 +88,7 @@ class _RegisterState extends State<Register> {
                             } else if (!value.contains('@')) {
                               return 'Enter a valid email Format like example@example.com';
                             }
-                            return '';
+                            return null;
                           },
                         ),
                         SizedBox(
@@ -105,7 +105,7 @@ class _RegisterState extends State<Register> {
                             } else if (value.length < 8) {
                               return 'the Password must be more than 8 characters';
                             }
-                            return '';
+                            return null;
                           },
                         ),
                         SizedBox(

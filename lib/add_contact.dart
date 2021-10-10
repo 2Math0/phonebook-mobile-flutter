@@ -4,12 +4,28 @@ import 'package:conca/constants.dart';
 import 'package:conca/contacts.dart';
 import 'package:conca/widgets/dotted_Field.dart';
 import 'package:conca/widgets/rounded_button.dart';
+import 'package:conca/widgets/snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContactADD extends StatefulWidget {
+  final String nameUpdate;
+  final String emailUpdate;
+  final String phoneUpdate;
+  final String notesUpdate;
+  final bool updateMode;
+  final int id;
+
+  const ContactADD(
+      {this.nameUpdate,
+      this.emailUpdate,
+      this.phoneUpdate,
+      this.notesUpdate,
+      this.updateMode = false,
+      this.id});
+
   @override
   _ContactADDState createState() => _ContactADDState();
 }
@@ -24,13 +40,21 @@ class _ContactADDState extends State<ContactADD> {
         random: ran,
       );
   Color constantColor = randomColor();
+  final contactKey = GlobalKey<FormState>();
   final TextEditingController name = new TextEditingController();
   final TextEditingController email = new TextEditingController();
   final TextEditingController phone = new TextEditingController();
   final TextEditingController notes = new TextEditingController();
+  String nameHolder;
+  @override
+  void initState() {
+    checkUpdateMode();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    nameHolder = name.text;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
@@ -43,86 +67,117 @@ class _ContactADDState extends State<ContactADD> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(
-                      mdiIcons[name.text.isEmpty
+                      mdiIcons[nameHolder.isEmpty
                           ? 'null'
-                          : name.text[0].toUpperCase()],
+                          : nameHolder[0].toUpperCase()],
                       size: 160,
                       color: constantColor,
                     ),
                     SizedBox(height: 64),
-                    _dottedBorder(
-                      constantDots,
-                      TextFormField(
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.person,
-                              color: constantColor,
+                    Form(
+                      key: contactKey,
+                      child: Column(
+                        children: [
+                          _dottedBorder(
+                            constantDots,
+                            TextFormField(
+                              decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.person,
+                                    color: constantColor,
+                                  ),
+                                  border: InputBorder.none,
+                                  hintText: 'name'),
+                              autocorrect: false,
+                              style: kNormalTextStyle,
+                              controller: name,
+                              validator: (v) {
+                                if (v.isEmpty) {
+                                  return 'A name is required';
+                                } else {
+                                  return null;
+                                }
+                              },
+                              onChanged: (str) {
+                                setState(() {
+                                  nameHolder = str;
+                                });
+                              },
                             ),
-                            border: InputBorder.none,
-                            hintText: 'name'),
-                        autocorrect: false,
-                        style: kNormalTextStyle,
-                        onChanged: (str) {
-                          setState(() {
-                            name.text = str;
-                          });
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 32),
-                    _dottedBorder(
-                      constantDots,
-                      TextFormField(
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.email,
-                            color: constantColor,
                           ),
-                          border: InputBorder.none,
-                          hintText: 'email',
-                        ),
-                        autocorrect: false,
-                        keyboardType: TextInputType.emailAddress,
-                        style: kNormalTextStyle,
-                        controller: email,
-                      ),
-                    ),
-                    SizedBox(height: 32),
-                    _dottedBorder(
-                      constantDots,
-                      TextFormField(
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.phone,
-                              color: constantColor,
+                          SizedBox(height: 32),
+                          _dottedBorder(
+                            constantDots,
+                            TextFormField(
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.email,
+                                  color: constantColor,
+                                ),
+                                border: InputBorder.none,
+                                hintText: 'email',
+                              ),
+                              autocorrect: false,
+                              keyboardType: TextInputType.emailAddress,
+                              style: kNormalTextStyle,
+                              controller: email,
+                              validator: (v) {
+                                if (v.isEmpty) {
+                                  return 'email is required';
+                                } else if (!v.contains('@')) {
+                                  return 'enter valid email format';
+                                } else {
+                                  return null;
+                                }
+                              },
                             ),
-                            border: InputBorder.none,
-                            hintText: 'phone'),
-                        autocorrect: false,
-                        keyboardType: TextInputType.phone,
-                        style: kNormalTextStyle,
-                        controller: phone,
-                      ),
-                    ),
-                    SizedBox(height: 32),
-                    _dottedBorder(
-                      constantDots,
-                      TextFormField(
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.insert_drive_file,
-                              color: constantColor,
+                          ),
+                          SizedBox(height: 32),
+                          _dottedBorder(
+                            constantDots,
+                            TextFormField(
+                              decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.phone,
+                                    color: constantColor,
+                                  ),
+                                  border: InputBorder.none,
+                                  hintText: 'phone'),
+                              autocorrect: false,
+                              keyboardType: TextInputType.phone,
+                              style: kNormalTextStyle,
+                              controller: phone,
+                              validator: (v) {
+                                if (v.isEmpty) {
+                                  return 'Phone is required';
+                                } else {
+                                  return null;
+                                }
+                              },
                             ),
-                            border: InputBorder.none,
-                            hintText: 'notes'),
-                        autocorrect: false,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        style: kNormalTextStyle,
-                        controller: notes,
+                          ),
+                          SizedBox(height: 32),
+                          _dottedBorder(
+                            constantDots,
+                            TextFormField(
+                              decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.insert_drive_file,
+                                    color: constantColor,
+                                  ),
+                                  border: InputBorder.none,
+                                  hintText: 'notes'),
+                              autocorrect: false,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              style: kNormalTextStyle,
+                              controller: notes,
+                            ),
+                          ),
+                          SizedBox(height: 128),
+                        ],
                       ),
                     ),
-                    SizedBox(height: 128),
                   ],
                 ),
               ),
@@ -132,15 +187,16 @@ class _ContactADDState extends State<ContactADD> {
               left: size.width * 0.25,
               width: size.width * 0.5,
               child: RoundedButton(
-                  text: 'ADD',
+                  text: widget.updateMode ? 'UPDATE' : 'ADD',
                   color: constantColor,
                   press: () {
-                    uploadContact(
-                        name.text, email.text, phone.text, notes.text);
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (BuildContext context) => ContactsPage()),
-                            (Route<dynamic> route) => false);
+                    if (contactKey.currentState.validate()) {
+                      uploadContact(
+                          name.text, email.text, phone.text, notes.text);
+                    } else {
+                      snackBarCustom(context, Colors.white, Colors.transparent,
+                          'Not valid data');
+                    }
                   }),
             ),
           ],
@@ -158,21 +214,45 @@ class _ContactADDState extends State<ContactADD> {
       'name': name,
       'notes': notes,
       'phones': [
-        {'value' : phones,
-        'type_id' : 1}],
+        {'value': phones, 'type_id': 1}
+      ],
     };
-    final response = await http.post(Uri.parse('${API_URL}contacts'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode(jsonBody));
+    final response = widget.updateMode
+        ? await http.patch(Uri.parse('${API_URL}contacts/${widget.id.toString()}'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: json.encode({'email': email,
+              'name': name,
+              'notes': notes,}))
+        : await http.post(Uri.parse('${API_URL}contacts'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: json.encode(jsonBody));
     print(jsonBody);
     if (response.statusCode == 200) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) => ContactsPage()),
+          (Route<dynamic> route) => false);
       return ContactModel.fromJson(jsonDecode(response.body));
     } else {
       print("The error message is: ${response.body}");
+      snackBarCustom(
+          context, Colors.white, Colors.transparent, response.body.toString());
+    }
+  }
+
+  void checkUpdateMode() {
+    if (widget.nameUpdate != null) {
+      name.text = widget.nameUpdate;
+      email.text = widget.emailUpdate;
+      phone.text = widget.phoneUpdate;
+      notes.text = widget.notesUpdate;
     }
   }
 }

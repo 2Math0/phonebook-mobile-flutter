@@ -20,8 +20,8 @@ class _ContactsPageState extends State<ContactsPage> {
 
   @override
   void initState() {
-    _fetchData();
     super.initState();
+    _fetchData();
   }
 
   @override
@@ -172,7 +172,6 @@ class _ContactsPageState extends State<ContactsPage> {
         backgroundColor: kDarkAccentColor,
         materialTapTargetSize: MaterialTapTargetSize.padded,
         onPressed: () {
-          _fetchData();
           Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => ContactADD()));
         },
