@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:ui';
-import 'package:conca/Contacts/alpha_icons_generator.dart';
-import 'package:conca/add_contact.dart';
+import 'package:conca/Contacts/add_contact.dart';
 import 'package:conca/constants.dart';
-import 'package:conca/contact_card.dart';
+import 'package:conca/Contacts/contact_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -42,9 +41,7 @@ class _ContactsPageState extends State<ContactsPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
                         leading: Icon(
-                          mdiIcons[_contactsList[i]['name'][0]
-                              .toString()
-                              .toUpperCase()],
+                          contactIcon(_contactsList[i]['name']),
                           color: tileIconColor,
                           size: MediaQuery.of(context).size.width * 0.15,
                         ),
@@ -169,7 +166,7 @@ class _ContactsPageState extends State<ContactsPage> {
           Icons.person_add,
           color: Colors.white,
         ),
-        backgroundColor: kDarkAccentColor,
+        backgroundColor: kAccentColor,
         materialTapTargetSize: MaterialTapTargetSize.padded,
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
@@ -182,11 +179,8 @@ class _ContactsPageState extends State<ContactsPage> {
   Future<void> _fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    final response = await http.get(Uri.parse('${API_URL}contacts'), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
-    });
+    final response = await http.get(Uri.parse('${API_URL}contacts'),
+        headers: headersToken(token));
     final data = json.decode(response.body);
     setState(() {
       _contactsList = data['data'];
@@ -202,12 +196,8 @@ class _ContactsPageState extends State<ContactsPage> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    final response =
-        await http.delete(Uri.parse('${API_URL}contacts/$n'), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
-    });
+    final response = await http.delete(Uri.parse('${API_URL}contacts/$n'),
+        headers: headersToken(token));
     final data = json.decode(response.body);
     setState(() {
       _contactsList = data['data'];

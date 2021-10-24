@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:math' as math;
-import 'package:conca/contacts.dart';
+import 'package:conca/Contacts/contacts.dart';
+import 'package:conca/widgets/login_input_field.dart';
+import 'package:conca/widgets/password_input_field.dart';
 import 'package:conca/widgets/rounded_button.dart';
 import 'package:conca/widgets/snackbar.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +13,6 @@ import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../widgets/rounded_button.dart';
 import 'components/background_signUp.dart';
-import 'components/register_input_field.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -40,7 +41,7 @@ class _RegisterState extends State<Register> {
                   Stack(
                     children: <Widget>[
                       Text(
-                        'Sign Up',
+                        'Registration',
                         style: TextStyle(
                           fontSize: 48,
                           fontFamily: 'Balsamiq',
@@ -76,37 +77,21 @@ class _RegisterState extends State<Register> {
                     key: signUpKey,
                     child: Column(
                       children: <Widget>[
-                        RegisterInput(
+                        NormalInputField(
                           hint: 'E-mail',
                           icon: Icons.person,
                           inputType: TextInputType.emailAddress,
                           textController: emailController,
-                          isPasswordFormat: false,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Please Enter Email';
-                            } else if (!value.contains('@')) {
-                              return 'Enter a valid email Format like example@example.com';
-                            }
-                            return null;
-                          },
+                          validator: (value) {return emailValidation(value);},
                         ),
                         SizedBox(
                           height: 40,
                         ),
-                        RegisterInput(
+                        PasswordInputField(
                           hint: 'Password',
                           icon: Icons.lock,
-                          isPasswordFormat: true,
                           textController: passwordController,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Please Enter Password';
-                            } else if (value.length < 8) {
-                              return 'the Password must be more than 8 characters';
-                            }
-                            return null;
-                          },
+                          validator: (value) {return passwordValidation(value);},
                         ),
                         SizedBox(
                           height: 40,
@@ -130,10 +115,10 @@ class _RegisterState extends State<Register> {
                                   passwordController.text);
                             } else {
                               snackBarCustom(
-                                  context,
-                                  kGearGrey,
-                                  Colors.black.withOpacity(0.6),
-                                  'Enter a valid email and 8 password characters at least',
+                                context,
+                                kGearGrey,
+                                Colors.black.withOpacity(0.6),
+                                'Enter a valid email and 8 password characters at least',
                               );
                             }
                           },
@@ -182,12 +167,9 @@ class _RegisterState extends State<Register> {
     Map data = {'email': email, 'password': pass, 'name': getRandomString(7)};
     var jsonResponse;
     var response = await http.post(
-      Uri.parse("https://phonebook-be.herokuapp.com/api/register"),
+      Uri.parse("${API_URL}register"),
       body: json.encode(data),
-      headers: {
-        "content-type": "application/json",
-        "accept": "application/json",
-      },
+      headers: kJsonAPP,
     );
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
@@ -205,10 +187,8 @@ class _RegisterState extends State<Register> {
     } else {
       errorMsg = response.body;
       setState(() {
-        snackBarCustom(
-            context,
-            kGearGrey,
-            Colors.black.withOpacity(0.6), errorMsg.toString());
+        snackBarCustom(context, kGearGrey, Colors.black.withOpacity(0.6),
+            errorMsg.toString());
         _isLoading = false;
       });
       print("The error message is: ${response.body} ${emailController.text}");

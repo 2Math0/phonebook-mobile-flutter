@@ -1,6 +1,6 @@
-import 'package:conca/Contacts/alpha_icons_generator.dart';
-import 'package:conca/add_contact.dart';
+import 'package:conca/Contacts/add_contact.dart';
 import 'package:conca/constants.dart';
+import 'package:conca/widgets/snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -23,31 +23,29 @@ class ContactCard extends StatelessWidget {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                   builder: (BuildContext context) => ContactADD(
-                    nameUpdate: contactDetails['name'].toString(),
-                    emailUpdate: contactDetails['email'],
-                    phoneUpdate: contactDetails['phones'][0]['value'],
-                    notesUpdate: contactDetails['notes'],
-                    id: contactDetails['id'],
-                    updateMode: true,
-                  )),
-                  (Route<dynamic> route) => false);
+                        nameUpdate: contactDetails['name'].toString(),
+                        emailUpdate: contactDetails['email'],
+                        phoneUpdate: contactDetails['phones'][0]['value'],
+                        notesUpdate: contactDetails['notes'],
+                        id: contactDetails['id'],
+                        updateMode: true,
+                      )),
+              (Route<dynamic> route) => false);
           break;
         case 'Delete':
           Future.delayed(Duration.zero, () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             String token = prefs.getString("token");
             final response = await http.delete(
-                Uri.parse('${API_URL}contacts/${contactDetails['id']}'),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                  'Authorization': 'Bearer $token',
-                });
+              Uri.parse('${API_URL}contacts/${contactDetails['id']}'),
+              headers: headersToken(token),
+            );
+            snackBarCustom(context, Colors.red, Colors.transparent, response.body.toString(),textColor: Colors.white);
           });
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                   builder: (BuildContext context) => ContactsPage()),
-                  (Route<dynamic> route) => false);
+              (Route<dynamic> route) => false);
           break;
       }
     }
@@ -60,7 +58,11 @@ class ContactCard extends StatelessWidget {
           PopupMenuButton<String>(
             padding: EdgeInsets.all(32),
             onSelected: handleClick,
-            icon: Icon(Icons.menu,color: mainIconColor,size: 32,),
+            icon: Icon(
+              Icons.menu,
+              color: mainIconColor,
+              size: 32,
+            ),
             itemBuilder: (BuildContext context) {
               return {'Edit', 'Delete'}.map((String choice) {
                 return PopupMenuItem<String>(
@@ -79,7 +81,7 @@ class ContactCard extends StatelessWidget {
             children: <Widget>[
               Center(
                 child: Icon(
-                  mdiIcons[contactDetails['name'][0].toString().toUpperCase()],
+                  contactIcon(contactDetails['name']),
                   size: 160,
                   color: mainIconColor,
                 ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:conca/contacts.dart';
+import 'package:conca/widgets/password_input_field.dart';
+import 'package:conca/Contacts/contacts.dart';
 import 'package:conca/widgets/snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:conca/Registering/RegisterPage.dart';
@@ -9,7 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'components/background_signUp.dart';
-import 'components/login_input_field.dart';
+import '../widgets/login_input_field.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -53,8 +54,8 @@ class _LoginPageState extends State<LoginPage> {
       ));
     } else {
       return Background(
-          child: SingleChildScrollView(
-        child: Column(
+        child: SingleChildScrollView(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -95,124 +96,101 @@ class _LoginPageState extends State<LoginPage> {
               ),
               Form(
                 key: loginKey,
-                child: Column(
-                  children: [
-                    LoginInput(
-                      hint: 'E-mail',
-                      icon: Icons.person,
-                      inputType: TextInputType.emailAddress,
-                      textController: emailController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please Enter Email';
-                        } else if (!value.contains('@')) {
-                          return 'Enter a valid email Format like example@example.com';
+                child: Column(children: [
+                  NormalInputField(
+                    hint: 'E-mail',
+                    icon: Icons.person,
+                    inputType: TextInputType.emailAddress,
+                    textController: emailController,
+                    validator: (v){return emailValidation(v);},
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  PasswordInputField(
+                    hint: 'Password',
+                    icon: Icons.lock,
+                    textController: passwordController,
+                    validator: (v){return passwordValidation(v);},
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                ]),
+              ),
+              RoundedButton(
+                text: 'Log In',
+                color: kDarkAccentColor,
+                press: () {
+                  print("Login pressed");
+                  if (loginKey.currentState.validate()) {
+                    setState(() {
+                      _isLoading = true;
+                      Future.delayed(Duration(seconds: 12), () {
+                        if (_isLoading == true) {
+                          _isLoading = false;
+                          snackBarCustom(context, kAccentColor,
+                              Colors.transparent, 'time out');
                         }
-                        return null;
-                      },
+                      });
+                    });
+                    loginCore(emailController.text, passwordController.text);
+                  } else {
+                    snackBarCustom(
+                      context,
+                      kAccentColor,
+                      Colors.black87,
+                      'Enter a valid email and 8 password characters at least',
+                    );
+                  }
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Not Signed in ?',
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  ElevatedButton(
+                    child: Text(
+                      'Register',
+                      style: TextStyle(
+                        fontFamily: 'Balsamiq',
+                        color: kSemiDarkAccentColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    LoginInput(
-                      hint: 'Password',
-                      icon: Icons.lock,
-                      isPasswordFormat: true,
-                      textController: passwordController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please Enter Password';
-                        } else if (value.length < 8) {
-                          return 'the Password must be more than 8 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-
-            ]),),
-                    RoundedButton(
-                      text: 'Log In',
-                      color: kDarkAccentColor,
-                      press: () {
-                        print("Login pressed");
-                        if (loginKey.currentState.validate()) {
-                          setState(() {
-                            _isLoading = true;
-                            Future.delayed(Duration(seconds: 12), () {
-                              if (_isLoading == true) {
-                                _isLoading = false;
-                                snackBarCustom(context,
-                                    kAccentColor,
-                                    Colors.transparent, 'time out');
-                              }
-                            });
-                          });
-                          loginCore(
-                              emailController.text, passwordController.text);
-                        } else {
-                          snackBarCustom(
-                              context,
-                              kAccentColor,
-                              Colors.black87,
-                              'Enter a valid email and 8 password characters at least',
-
-                          );
-                        }
-                      },
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Not Signed in ?',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        ElevatedButton(
-                          child: Text(
-                            'Sign up',
-                            style: TextStyle(
-                              fontFamily: 'Balsamiq',
-                              color: kSemiDarkAccentColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.transparent),
-                              elevation: MaterialStateProperty.all(0)),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Register()));
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-      ));
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.transparent),
+                        elevation: MaterialStateProperty.all(0)),
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Register()));
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
     }
   }
 
   loginCore(String email, String pass) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    Map data = {"email": '$email', "password": "$pass"};
+    Map<String, String> data = {"email": '$email', "password": "$pass"};
     var jsonResponse;
     var response = await http.post(
-      Uri.parse("https://phonebook-be.herokuapp.com/api/login"),
+      Uri.parse("${API_URL}login"),
       body: json.encode(data),
-      headers: {
-        "content-type": "application/json",
-        "accept": "application/json",
-      },
+      headers: kJsonAPP,
     );
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
@@ -231,10 +209,7 @@ class _LoginPageState extends State<LoginPage> {
       errorMsg = response.body;
       setState(() {
         snackBarCustom(
-            context,
-            kSemiDarkAccentColor,
-            Colors.black87,
-            errorMsg.toString());
+            context, kSemiDarkAccentColor, Colors.black87, errorMsg.toString());
         _isLoading = false;
       });
     }

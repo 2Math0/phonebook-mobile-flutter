@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'package:conca/Contacts/alpha_icons_generator.dart';
 import 'package:conca/constants.dart';
-import 'package:conca/contacts.dart';
+import 'package:conca/Contacts/contacts.dart';
 import 'package:conca/widgets/dotted_Field.dart';
 import 'package:conca/widgets/rounded_button.dart';
 import 'package:conca/widgets/snackbar.dart';
@@ -66,10 +65,7 @@ class _ContactADDState extends State<ContactADD> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(
-                      mdiIcons[nameHolder.isEmpty
-                          ? 'null'
-                          : nameHolder[0].toUpperCase()],
+                    Icon(contactIcon(nameHolder),
                       size: 160,
                       color: constantColor,
                     ),
@@ -218,22 +214,16 @@ class _ContactADDState extends State<ContactADD> {
       ],
     };
     final response = widget.updateMode
-        ? await http.patch(Uri.parse('${API_URL}contacts/${widget.id.toString()}'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-            body: json.encode({'email': email,
+        ? await http.patch(
+            Uri.parse('${API_URL}contacts/${widget.id.toString()}'),
+            headers: headersToken(token),
+            body: json.encode({
+              'email': email,
               'name': name,
-              'notes': notes,}))
+              'notes': notes,
+            }))
         : await http.post(Uri.parse('${API_URL}contacts'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-            body: json.encode(jsonBody));
+            headers: headersToken(token), body: json.encode(jsonBody));
     print(jsonBody);
     if (response.statusCode == 200) {
       Navigator.of(context).pushAndRemoveUntil(
