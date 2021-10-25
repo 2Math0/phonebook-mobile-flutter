@@ -42,7 +42,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
       myChild: TextFormField(
         cursorColor: widget.cursorColor,
         keyboardType: widget.inputType,
-        obscureText: true,
+        obscureText: hidePassword,
         autofocus: false,
         controller: widget.textController,
         validator: widget.validator,
