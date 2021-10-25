@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:conca/Contacts/contacts.dart';
+import 'package:conca/LogIN/LoginPage.dart';
 import 'package:conca/widgets/login_input_field.dart';
 import 'package:conca/widgets/password_input_field.dart';
 import 'package:conca/widgets/rounded_button.dart';
-import 'package:conca/widgets/snackbar.dart';
+import 'package:conca/widgets/snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../widgets/rounded_button.dart';
-import 'components/background_signUp.dart';
+import 'components/background_register.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -83,6 +84,11 @@ class _RegisterState extends State<Register> {
                           inputType: TextInputType.emailAddress,
                           textController: emailController,
                           validator: (value) {return emailValidation(value);},
+                          bgColor: kGearYellow,
+                          textColor: Colors.black,
+                          iconColor: kGearOrange,
+                          borderColor: Colors.black.withOpacity(0.65),
+                          cursorColor: kGearOrange,
                         ),
                         SizedBox(
                           height: 40,
@@ -92,6 +98,11 @@ class _RegisterState extends State<Register> {
                           icon: Icons.lock,
                           textController: passwordController,
                           validator: (value) {return passwordValidation(value);},
+                          bgColor: kGearYellow,
+                          textColor: Colors.black,
+                          iconColor: kGearOrange,
+                          borderColor: Colors.black.withOpacity(0.65),
+                          cursorColor: kGearOrange,
                         ),
                         SizedBox(
                           height: 40,
@@ -151,7 +162,10 @@ class _RegisterState extends State<Register> {
                                 MaterialStateProperty.all(Colors.transparent),
                             elevation: MaterialStateProperty.all(0)),
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) => LoginPage()),
+                                  (Route<dynamic> route) => false);
                         },
                       ),
                     ],

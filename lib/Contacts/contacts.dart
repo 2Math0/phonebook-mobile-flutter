@@ -22,6 +22,7 @@ class _ContactsPageState extends State<ContactsPage> {
     super.initState();
     _fetchData();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,10 +46,14 @@ class _ContactsPageState extends State<ContactsPage> {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
-                          leading: Icon(
-                            contactIcon(_contactsList[i]['name']),
-                            color: tileIconColor,
-                            size: MediaQuery.of(context).size.width * 0.15,
+                          leading: Hero(
+                            tag:
+                                '${_contactsList[i]['name']} ${_contactsList[i]['email']} ${_contactsList[i]['phones']}',
+                            child: Icon(
+                              contactIcon(_contactsList[i]['name']),
+                              color: tileIconColor,
+                              size: MediaQuery.of(context).size.width * 0.15,
+                            ),
                           ),
                           title: Padding(
                             padding: const EdgeInsets.fromLTRB(12, 12, 0, 0),
@@ -65,7 +70,9 @@ class _ContactsPageState extends State<ContactsPage> {
                           subtitle: Padding(
                             padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: Text(
-                              _contactsList[i]['phones'][0]['value'],
+                              _contactsList[i]['phones'].length >= 1
+                                  ? _contactsList[i]['phones'][0]['value']
+                                  : '',
                               softWrap: true,
                               style: TextStyle(
                                 color: Colors.black54,
@@ -85,11 +92,14 @@ class _ContactsPageState extends State<ContactsPage> {
                           contentPadding: EdgeInsets.all(8),
                           trailing: CupertinoButton(
                             child: Icon(
-                                Icons.call,
-                                color: tileIconColor,
-                                size: 32,
+                              Icons.call,
+                              color: tileIconColor,
+                              size: 32,
                             ),
-                            onPressed: ()=>launchingLinks(_contactsList[i]['phones'][0]['value'], context, 'tel'),
+                            onPressed: () => launchingLinks(
+                                _contactsList[i]['phones'][0]['value'],
+                                context,
+                                'tel'),
                           ),
                           onLongPress: () {
                             showGeneralDialog(

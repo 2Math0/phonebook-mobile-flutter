@@ -3,7 +3,7 @@ import 'package:conca/constants.dart';
 import 'package:conca/Contacts/contacts.dart';
 import 'package:conca/widgets/dotted_Field.dart';
 import 'package:conca/widgets/rounded_button.dart';
-import 'package:conca/widgets/snackbar.dart';
+import 'package:conca/widgets/snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

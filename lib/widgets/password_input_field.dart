@@ -9,13 +9,22 @@ class PasswordInputField extends StatefulWidget {
   final TextInputType inputType;
   final TextEditingController textController;
   final String Function(String) validator;
+  final Color bgColor;
+  final Color borderColor;
+  final Color textColor;
+  final Color iconColor;
+  final Color cursorColor;
 
   const PasswordInputField(
       {@required this.hint,
       @required this.icon,
       this.inputType = TextInputType.text,
       this.textController,
-      this.validator});
+      this.validator,
+      this.bgColor = kAccentColor,
+      this.borderColor = Colors.black,
+      this.textColor = Colors.black,
+      this.iconColor = Colors.black, this.cursorColor = kDarkAccentColor});
 
   @override
   _PasswordInputFieldState createState() => _PasswordInputFieldState();
@@ -27,11 +36,11 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return InputDottedBorder(
-      background: kAccentColor,
-      borderColor: Colors.black,
+      background: widget.bgColor,
+      borderColor: widget.borderColor,
       random: stepOneIgnoreOne(randomDoubles(), size.width),
       myChild: TextFormField(
-        cursorColor: kDarkAccentColor,
+        cursorColor: widget.cursorColor,
         keyboardType: widget.inputType,
         obscureText: true,
         autofocus: false,
@@ -40,7 +49,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
         decoration: InputDecoration(
           prefixIcon: Icon(
             widget.icon,
-            color: Colors.black,
+            color: widget.iconColor,
           ),
           suffixIcon: IconButton(
             onPressed: () {
@@ -49,13 +58,13 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
               });
             },
             icon: Icon(hidePassword ? Icons.visibility : Icons.visibility_off),
-            color: Colors.black.withOpacity(!hidePassword ? 0.4 : 1),
+            color: widget.iconColor.withOpacity(!hidePassword ? 0.4 : 1),
           ),
           hintText: widget.hint,
           hintStyle: TextStyle(color: Colors.black38),
           border: InputBorder.none,
         ),
-        style: kNormalTextStyle,
+        style: kNormalTextStyle.copyWith(color: widget.textColor),
       ),
     );
   }

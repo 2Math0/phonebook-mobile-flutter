@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:conca/widgets/password_input_field.dart';
 import 'package:conca/Contacts/contacts.dart';
-import 'package:conca/widgets/snackbar.dart';
+import 'package:conca/widgets/snack_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:conca/Registering/RegisterPage.dart';
 import 'package:conca/constants.dart';
@@ -9,7 +9,7 @@ import 'package:conca/widgets/rounded_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'components/background_signUp.dart';
+import 'components/background_logIn.dart';
 import '../widgets/login_input_field.dart';
 
 class LoginPage extends StatefulWidget {

@@ -1,11 +1,12 @@
 import 'dart:math';
-import 'package:conca/widgets/snackbar.dart';
+import 'package:conca/widgets/snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
 import 'model/alpha_icons_generator.dart';
-
+const estimatedHeight = 1100.00;
+const estimatedWidth = 500.00;
 const kAccentColor = Color(0xFF4ad194);
 const kDarkAccentColor = Color(0xFF1e9690);
 const kSemiDarkAccentColor = Color(0xFF35b79e);

@@ -1,6 +1,6 @@
 import 'package:conca/Contacts/add_contact.dart';
 import 'package:conca/constants.dart';
-import 'package:conca/widgets/snackbar.dart';
+import 'package:conca/widgets/snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -40,7 +40,9 @@ class ContactCard extends StatelessWidget {
               Uri.parse('${API_URL}contacts/${contactDetails['id']}'),
               headers: headersToken(token),
             );
-            snackBarCustom(context, Colors.red, Colors.transparent, response.body.toString(),textColor: Colors.white);
+            snackBarCustom(context, Colors.red, Colors.transparent,
+                response.body.toString(),
+                textColor: Colors.white);
           });
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
@@ -49,6 +51,7 @@ class ContactCard extends StatelessWidget {
           break;
       }
     }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -80,10 +83,13 @@ class ContactCard extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Center(
-                child: Icon(
-                  contactIcon(contactDetails['name']),
-                  size: 160,
-                  color: mainIconColor,
+                child: Hero(
+                  tag: '${contactDetails['name']} ${contactDetails['email']} ${contactDetails['phones']}',
+                  child: Icon(
+                    contactIcon(contactDetails['name']),
+                    size: 160,
+                    color: mainIconColor,
+                  ),
                 ),
               ),
               SizedBox(height: 64),
@@ -106,7 +112,8 @@ class ContactCard extends StatelessWidget {
               ),
               SizedBox(height: 32),
               RawMaterialButton(
-                onPressed: ()=>launchingLinks(contactDetails['email'], context, 'mailto'),
+                onPressed: () =>
+                    launchingLinks(contactDetails['email'], context, 'mailto'),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -126,11 +133,12 @@ class ContactCard extends StatelessWidget {
               ),
               SizedBox(height: 16),
               ListView.builder(
-                itemBuilder: (BuildContext context, i){
+                itemBuilder: (BuildContext context, i) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: RawMaterialButton(
-                      onPressed: ()=>launchingLinks(contactDetails['phones'][i]['value'], context, 'tel'),
+                      onPressed: () => launchingLinks(
+                          contactDetails['phones'][i]['value'], context, 'tel'),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -147,7 +155,8 @@ class ContactCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                  );},
+                  );
+                },
                 itemCount: contactDetails['phones'].length,
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
