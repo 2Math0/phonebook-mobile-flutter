@@ -121,21 +121,30 @@ class ContactCard extends StatelessWidget {
                       style: kNormalTextStyle),
                 ],
               ),
-              SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Icon(
-                    CupertinoIcons.phone,
-                    size: 32,
-                    color: mainIconColor,
-                  ),
-                  SizedBox(width: 32),
-                  Text(
-                    contactDetails['phones'][0]['value'],
-                    style: kNormalTextStyle,
-                  ),
-                ],
+              SizedBox(height: 16),
+              ListView.builder(
+                itemBuilder: (BuildContext context, i){
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          CupertinoIcons.phone,
+                          size: 32,
+                          color: mainIconColor,
+                        ),
+                        SizedBox(width: 32),
+                        Text(
+                          contactDetails['phones'][i]['value'],
+                          style: kNormalTextStyle,
+                        ),
+                      ],
+                    ),
+                  );},
+                itemCount: contactDetails['phones'].length,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
               ),
               SizedBox(height: 32),
               Row(

@@ -18,7 +18,7 @@ const kNormalTextStyle = TextStyle(
   color: Colors.black,
 );
 const API_URL = 'https://phonebook-be.herokuapp.com/api/';
-const Map<String, String> kJsonAPP = {
+final Map<String, String> kJsonAPP = {
   'Content-Type': 'application/json',
   'Accept': 'application/json'
 };

@@ -40,10 +40,12 @@ class _ContactADDState extends State<ContactADD> {
       );
   Color constantColor = randomColor();
   final contactKey = GlobalKey<FormState>();
+  int numPhones = 1;
   final TextEditingController name = new TextEditingController();
   final TextEditingController email = new TextEditingController();
-  final TextEditingController phone = new TextEditingController();
+  final List<TextEditingController> phone =  [TextEditingController()];
   final TextEditingController notes = new TextEditingController();
+  List<String> phones = [];
   String nameHolder;
   @override
   void initState() {
@@ -65,7 +67,8 @@ class _ContactADDState extends State<ContactADD> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(contactIcon(nameHolder),
+                    Icon(
+                      contactIcon(nameHolder),
                       size: 160,
                       color: constantColor,
                     ),
@@ -128,30 +131,52 @@ class _ContactADDState extends State<ContactADD> {
                               },
                             ),
                           ),
-                          SizedBox(height: 32),
-                          _dottedBorder(
-                            constantDots,
-                            TextFormField(
-                              decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.phone,
-                                    color: constantColor,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+                            child: ListView.builder(
+                              itemBuilder: (BuildContext context, i) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 26),
+                                  child: _dottedBorder(
+                                    constantDots,
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                          prefixIcon: Icon(
+                                            Icons.phone,
+                                            color: constantColor,
+                                          ),
+                                          border: InputBorder.none,
+                                          hintText: 'phone'),
+                                      autocorrect: false,
+                                      keyboardType: TextInputType.phone,
+                                      style: kNormalTextStyle,
+                                      controller: phone[i],
+                                      validator: (v) {
+                                        if (v.isEmpty) {
+                                          return 'Phone is required';
+                                        } else {
+                                          return null;
+                                        }
+                                      },
+                                    ),
                                   ),
-                                  border: InputBorder.none,
-                                  hintText: 'phone'),
-                              autocorrect: false,
-                              keyboardType: TextInputType.phone,
-                              style: kNormalTextStyle,
-                              controller: phone,
-                              validator: (v) {
-                                if (v.isEmpty) {
-                                  return 'Phone is required';
-                                } else {
-                                  return null;
-                                }
+                                );
                               },
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: numPhones,
                             ),
                           ),
+                          IconButton(
+                              icon: Icon(Icons.add),
+                              color: constantColor,
+                              iconSize: 28.0,
+                              onPressed: () {
+                                setState(() {
+                                  numPhones++;
+                                  phone.add(TextEditingController());
+                                });
+                              }),
                           SizedBox(height: 32),
                           _dottedBorder(
                             constantDots,
@@ -188,7 +213,7 @@ class _ContactADDState extends State<ContactADD> {
                   press: () {
                     if (contactKey.currentState.validate()) {
                       uploadContact(
-                          name.text, email.text, phone.text, notes.text);
+                          name.text, email.text, phone, notes.text);
                     } else {
                       snackBarCustom(context, Colors.white, Colors.transparent,
                           'Not valid data');
@@ -202,16 +227,22 @@ class _ContactADDState extends State<ContactADD> {
   }
 
   Future<ContactModel> uploadContact(
-      String name, String email, String phones, String notes) async {
+      String name, String email, List<TextEditingController> phones, String notes) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
+    List<Map<String, dynamic>> phonesConverter(){
+      List<Map<String,dynamic>> phoneList = [];
+      for(int i=0; i<phones.length; i++){
+        phoneList.add({'value':phones[i].text,'type_id':i+1});
+      }
+      print(phoneList);
+      return phoneList;
+    }
     var jsonBody = {
       'email': email,
       'name': name,
       'notes': notes,
-      'phones': [
-        {'value': phones, 'type_id': 1}
-      ],
+      'phones': phonesConverter(),
     };
     final response = widget.updateMode
         ? await http.patch(
@@ -229,6 +260,7 @@ class _ContactADDState extends State<ContactADD> {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (BuildContext context) => ContactsPage()),
           (Route<dynamic> route) => false);
+      print(response.body);
       return ContactModel.fromJson(jsonDecode(response.body));
     } else {
       print("The error message is: ${response.body}");
@@ -241,7 +273,7 @@ class _ContactADDState extends State<ContactADD> {
     if (widget.nameUpdate != null) {
       name.text = widget.nameUpdate;
       email.text = widget.emailUpdate;
-      phone.text = widget.phoneUpdate;
+      phone[0].text = widget.phoneUpdate;
       notes.text = widget.notesUpdate;
     }
   }
