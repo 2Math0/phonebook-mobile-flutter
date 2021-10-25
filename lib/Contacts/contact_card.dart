@@ -105,41 +105,47 @@ class ContactCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Icon(
-                    CupertinoIcons.envelope,
-                    size: 32,
-                    color: mainIconColor,
-                  ),
-                  SizedBox(width: 32),
-                  Text(
-                      contactDetails['email'] == null
-                          ? 'no Email'
-                          : contactDetails['email'],
-                      style: kNormalTextStyle),
-                ],
+              RawMaterialButton(
+                onPressed: ()=>launchingLinks(contactDetails['email'], context, 'mailto'),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      CupertinoIcons.envelope,
+                      size: 32,
+                      color: mainIconColor,
+                    ),
+                    SizedBox(width: 32),
+                    Text(
+                        contactDetails['email'] == null
+                            ? 'no Email'
+                            : contactDetails['email'],
+                        style: kNormalTextStyle),
+                  ],
+                ),
               ),
               SizedBox(height: 16),
               ListView.builder(
                 itemBuilder: (BuildContext context, i){
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(
-                          CupertinoIcons.phone,
-                          size: 32,
-                          color: mainIconColor,
-                        ),
-                        SizedBox(width: 32),
-                        Text(
-                          contactDetails['phones'][i]['value'],
-                          style: kNormalTextStyle,
-                        ),
-                      ],
+                    child: RawMaterialButton(
+                      onPressed: ()=>launchingLinks(contactDetails['phones'][i]['value'], context, 'tel'),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            CupertinoIcons.phone,
+                            size: 32,
+                            color: mainIconColor,
+                          ),
+                          SizedBox(width: 32),
+                          Text(
+                            contactDetails['phones'][i]['value'],
+                            style: kNormalTextStyle,
+                          ),
+                        ],
+                      ),
                     ),
                   );},
                 itemCount: contactDetails['phones'].length,

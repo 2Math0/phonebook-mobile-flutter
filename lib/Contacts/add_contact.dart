@@ -6,6 +6,7 @@ import 'package:conca/widgets/rounded_button.dart';
 import 'package:conca/widgets/snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,7 +44,7 @@ class _ContactADDState extends State<ContactADD> {
   int numPhones = 1;
   final TextEditingController name = new TextEditingController();
   final TextEditingController email = new TextEditingController();
-  final List<TextEditingController> phone =  [TextEditingController()];
+  final List<TextEditingController> phone = [TextEditingController()];
   final TextEditingController notes = new TextEditingController();
   List<String> phones = [];
   String nameHolder;
@@ -132,11 +133,13 @@ class _ContactADDState extends State<ContactADD> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 0),
                             child: ListView.builder(
                               itemBuilder: (BuildContext context, i) {
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 26),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 26),
                                   child: _dottedBorder(
                                     constantDots,
                                     TextFormField(
@@ -162,21 +165,34 @@ class _ContactADDState extends State<ContactADD> {
                                   ),
                                 );
                               },
-                              scrollDirection: Axis.vertical,
                               shrinkWrap: true,
                               itemCount: numPhones,
                             ),
                           ),
-                          IconButton(
-                              icon: Icon(Icons.add),
-                              color: constantColor,
-                              iconSize: 28.0,
-                              onPressed: () {
-                                setState(() {
-                                  numPhones++;
-                                  phone.add(TextEditingController());
-                                });
-                              }),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                IconButton(
+                                    icon: Icon(Icons.exposure_minus_1),
+                                    color: constantColor,
+                                    iconSize: 28.0,
+                                    onPressed: () {
+                                      setState(() {
+                                        numPhones--;
+                                        phone.removeLast();
+                                      });
+                                    }),
+                                IconButton(
+                                    icon: Icon(Icons.add),
+                                    color: constantColor,
+                                    iconSize: 28.0,
+                                    onPressed: () {
+                                      setState(() {
+                                        numPhones++;
+                                        phone.add(TextEditingController());
+                                      });
+                                    }),
+                              ]),
                           SizedBox(height: 32),
                           _dottedBorder(
                             constantDots,
@@ -212,8 +228,7 @@ class _ContactADDState extends State<ContactADD> {
                   color: constantColor,
                   press: () {
                     if (contactKey.currentState.validate()) {
-                      uploadContact(
-                          name.text, email.text, phone, notes.text);
+                      uploadContact(name.text, email.text, phone, notes.text);
                     } else {
                       snackBarCustom(context, Colors.white, Colors.transparent,
                           'Not valid data');
@@ -226,18 +241,21 @@ class _ContactADDState extends State<ContactADD> {
     );
   }
 
-  Future<ContactModel> uploadContact(
-      String name, String email, List<TextEditingController> phones, String notes) async {
+  Future<ContactModel> uploadContact(String name, String email,
+      List<TextEditingController> phones, String notes) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    List<Map<String, dynamic>> phonesConverter(){
-      List<Map<String,dynamic>> phoneList = [];
-      for(int i=0; i<phones.length; i++){
-        phoneList.add({'value':phones[i].text,'type_id':i+1});
+    List<Map<String, dynamic>> phonesConverter() {
+      List<Map<String, dynamic>> phoneList = [];
+      for (int i = 0; i < phones.length; i++) {
+        if (phones[i].text.isNotEmpty) {
+          phoneList.add({'value': phones[i].text.isEmpty, 'type_id': i + 1});
+        }
       }
       print(phoneList);
       return phoneList;
     }
+
     var jsonBody = {
       'email': email,
       'name': name,

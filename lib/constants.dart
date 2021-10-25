@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'package:conca/widgets/snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
 import 'model/alpha_icons_generator.dart';
 
@@ -54,11 +56,13 @@ Map<String, String> headersToken(token) {
   return headers;
 }
 
-IconData contactIcon(listOfNames) => mdiIcons[
-            listOfNames.isEmpty ? 'null' : listOfNames[0].toString().toUpperCase()] ==
+IconData contactIcon(listOfNames) => mdiIcons[listOfNames.isEmpty
+            ? 'null'
+            : listOfNames[0].toString().toUpperCase()] ==
         null
     ? Icons.person
-    : mdiIcons[listOfNames.isEmpty ? 'null' : listOfNames[0].toString().toUpperCase()];
+    : mdiIcons[
+        listOfNames.isEmpty ? 'null' : listOfNames[0].toString().toUpperCase()];
 String emailValidation(value) {
   if (value.isEmpty) {
     return 'Please Enter Email';
@@ -75,4 +79,17 @@ String passwordValidation(value) {
     return 'the Password must be more than 8 characters';
   }
   return null;
+}
+
+void launchingLinks(String l, BuildContext context, String type) async {
+  // tel for phone calls
+  // sms for messages
+  // mailto for sending emails
+  String url = '$type:$l';
+  if (await UrlLauncher.canLaunch(url)) {
+    await UrlLauncher.launch(url);
+  } else {
+    snackBarCustom(
+        context, Colors.white, Colors.transparent, 'Could not launch $l');
+  }
 }

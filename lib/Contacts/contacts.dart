@@ -22,7 +22,6 @@ class _ContactsPageState extends State<ContactsPage> {
     super.initState();
     _fetchData();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,8 +33,13 @@ class _ContactsPageState extends State<ContactsPage> {
           : SafeArea(
               child: Container(
                 child: RefreshIndicator(
+                  onRefresh: () {
+                    return _fetchData();
+                  },
                   child: ListView.builder(
                     padding: EdgeInsets.all(6),
+                    itemCount:
+                        _contactsList.length == 0 ? 0 : _contactsList.length,
                     itemBuilder: (BuildContext context, i) {
                       Color tileIconColor = randomColor();
                       return Padding(
@@ -79,6 +83,14 @@ class _ContactsPageState extends State<ContactsPage> {
                                     )));
                           },
                           contentPadding: EdgeInsets.all(8),
+                          trailing: CupertinoButton(
+                            child: Icon(
+                                Icons.call,
+                                color: tileIconColor,
+                                size: 32,
+                            ),
+                            onPressed: ()=>launchingLinks(_contactsList[i]['phones'][0]['value'], context, 'tel'),
+                          ),
                           onLongPress: () {
                             showGeneralDialog(
                                 barrierColor: Colors.black.withOpacity(0.5),
@@ -103,8 +115,8 @@ class _ContactsPageState extends State<ContactsPage> {
                                           child: Text(
                                             'Cancel',
                                             style: kNormalTextStyle.copyWith(
-                                              color:
-                                                  tileIconColor.withOpacity(0.8),
+                                              color: tileIconColor
+                                                  .withOpacity(0.8),
                                             ),
                                           ),
                                           style: ElevatedButton.styleFrom(
@@ -144,23 +156,10 @@ class _ContactsPageState extends State<ContactsPage> {
                                               BorderRadius.circular(30)),
                                     ));
                           },
-                          trailing: CupertinoButton(
-                            child: Icon(
-                              Icons.call,
-                              color: tileIconColor,
-                              size: 32,
-                            ),
-                            onPressed: () {
-                              print(_contactsList[i]['id']);
-                            },
-                          ),
                         ),
                       );
                     },
-                    itemCount:
-                        _contactsList.length == 0 ? 0 : _contactsList.length,
                   ),
-                  onRefresh: (){return _fetchData();},
                 ),
               ),
             ),
@@ -182,8 +181,10 @@ class _ContactsPageState extends State<ContactsPage> {
   Future<void> _fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
-    final response = await http.get(Uri.parse('${API_URL}contacts'),
-        headers: headersToken(token),);
+    final response = await http.get(
+      Uri.parse('${API_URL}contacts'),
+      headers: headersToken(token),
+    );
     final data = json.decode(response.body);
     setState(() {
       _contactsList = data['data'];
