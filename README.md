@@ -6,6 +6,19 @@ Made By flutter.
 ## Why This Project ?
 GDSC Sohag Team is working on different toturial projects to practice and expand their core members knowlege and that was the chosen app for Mobile and Web sections.
 
+## What the App Contain?
+
+* Authorization
+* JWT
+* SharedPrefrences
+* REST API (get, patch, delete, post)
+* Animations
+* Transitions - Hero()
+* random UI generators
+
+<hr/>
+
+## Preview on App:
 <p>
   
 <img src="https://user-images.githubusercontent.com/50797015/138681297-127a3e1b-40a4-4071-a57f-bf6f0fc77e12.jpg" alt="Log In" width="150"/>
@@ -20,17 +33,12 @@ GDSC Sohag Team is working on different toturial projects to practice and expand
 
 <hr/>
 
-## What the App Contain?
-
-* Authorization
-* JWT
-* SharedPrefrences
-* REST API (get, patch, delete, post)
-* Animations
-* Transitions - Hero()
-* random UI generators
-
-<hr/>
+## Features in app :
+* saving contacts on cloud
+* update contacts
+* saving multible numbers 
+* Login and register
+* send mails and call directly from app
 
 ## Used Libraries :
 ```
