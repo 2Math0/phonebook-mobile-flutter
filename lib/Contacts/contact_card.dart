@@ -1,5 +1,6 @@
 import 'package:conca/Contacts/add_contact.dart';
 import 'package:conca/constants.dart';
+import 'package:conca/model/phone_type.dart';
 import 'package:conca/widgets/snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,19 +18,37 @@ class ContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, List> _phonesSeparator() {
+      List<String> _phonesList = [];
+      List<int> _phonesTypes = [];
+      int l = contactDetails["phones"].length;
+      if(l>0) {
+        for (int i = 0; i < l; i++) {
+          _phonesList.add(contactDetails["phones"][i]['value']);
+          _phonesTypes.add(contactDetails["phones"][i]['type_id']);
+        }
+        return {'numbers': _phonesList, 'types': _phonesTypes};
+      }
+      else{
+        return null;
+      }
+    }
+    Map<String, List> phonesSeparator = _phonesSeparator();
     void handleClick(String value) {
       switch (value) {
         case 'Edit':
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (BuildContext context) => ContactADD(
-                        nameUpdate: contactDetails['name'].toString(),
-                        emailUpdate: contactDetails['email'],
-                        phoneUpdate: contactDetails['phones'][0]['value'],
-                        notesUpdate: contactDetails['notes'],
-                        id: contactDetails['id'],
-                        updateMode: true,
-                      )),
+                builder: (BuildContext context) => ContactADD(
+                  nameUpdate: contactDetails['name'].toString(),
+                  emailUpdate: contactDetails['email'],
+                  phoneUpdate: phonesSeparator['numbers'],
+                  typeUpdate: phonesSeparator['types'],
+                  notesUpdate: contactDetails['notes'],
+                  id: contactDetails['id'],
+                  updateMode: true,
+                ),
+              ),
               (Route<dynamic> route) => false);
           break;
         case 'Delete':
@@ -84,7 +103,8 @@ class ContactCard extends StatelessWidget {
             children: <Widget>[
               Center(
                 child: Hero(
-                  tag: '${contactDetails['name']} ${contactDetails['email']} ${contactDetails['phones']}',
+                  tag:
+                      '${contactDetails['name']} ${contactDetails['email']} ${contactDetails['phones']}',
                   child: Icon(
                     contactIcon(contactDetails['name']),
                     size: 160,
@@ -149,7 +169,7 @@ class ContactCard extends StatelessWidget {
                           ),
                           SizedBox(width: 32),
                           Text(
-                            contactDetails['phones'][i]['value'],
+                            '${contactDetails['phones'][i]['value']} - ${mapPhoneTypeViewer[contactDetails['phones'][i]['type_id']]}',
                             style: kNormalTextStyle,
                           ),
                         ],

@@ -83,6 +83,7 @@ class _ContactsPageState extends State<ContactsPage> {
                             ),
                           ),
                           onTap: () {
+                            // print(_contactsList[i]);
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (BuildContext context) => ContactCard(
                                       contactDetails: _contactsList[i],

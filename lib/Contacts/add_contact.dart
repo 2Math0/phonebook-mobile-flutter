@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:conca/constants.dart';
 import 'package:conca/Contacts/contacts.dart';
+import 'package:conca/model/phone_type.dart';
 import 'package:conca/widgets/dotted_Field.dart';
 import 'package:conca/widgets/rounded_button.dart';
 import 'package:conca/widgets/snack_bar.dart';
@@ -13,7 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ContactADD extends StatefulWidget {
   final String nameUpdate;
   final String emailUpdate;
-  final String phoneUpdate;
+  final List<String> phoneUpdate;
+  final List<int> typeUpdate;
   final String notesUpdate;
   final bool updateMode;
   final int id;
@@ -24,7 +26,7 @@ class ContactADD extends StatefulWidget {
       this.phoneUpdate,
       this.notesUpdate,
       this.updateMode = false,
-      this.id});
+      this.id, this.typeUpdate});
 
   @override
   _ContactADDState createState() => _ContactADDState();
@@ -32,11 +34,14 @@ class ContactADD extends StatefulWidget {
 
 class _ContactADDState extends State<ContactADD> {
   List<double> constantDots = stepOneIgnoreOne(randomDoubles(), 300);
-  InputDottedBorder _dottedBorder(List<double> ran, Widget w) =>
+  InputDottedBorder _dottedBorder(List<double> ran, Widget w,
+          {bool fRatio = true, double width = 0.5}) =>
       InputDottedBorder(
         myChild: w,
         background: Colors.white,
         borderColor: Colors.black,
+        fixedWidthRatio: fRatio,
+        chosenWidth: width,
         random: ran,
       );
   Color constantColor = randomColor();
@@ -47,6 +52,7 @@ class _ContactADDState extends State<ContactADD> {
   final List<TextEditingController> phone = [TextEditingController()];
   final TextEditingController notes = new TextEditingController();
   List<String> phones = [];
+  List<String> _chosenValues = ['1'];
   String nameHolder;
   @override
   void initState() {
@@ -140,28 +146,65 @@ class _ContactADDState extends State<ContactADD> {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 16, horizontal: 26),
-                                  child: _dottedBorder(
-                                    constantDots,
-                                    TextFormField(
-                                      decoration: InputDecoration(
-                                          prefixIcon: Icon(
-                                            Icons.phone,
-                                            color: constantColor,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      _dottedBorder(
+                                        constantDots,
+                                        TextFormField(
+                                          decoration: InputDecoration(
+                                              prefixIcon: Icon(
+                                                Icons.phone,
+                                                color: constantColor,
+                                              ),
+                                              border: InputBorder.none,
+                                              hintText: 'phone'),
+                                          autocorrect: false,
+                                          keyboardType: TextInputType.phone,
+                                          style: kNormalTextStyle,
+                                          controller: phone[i],
+                                          validator: (v) {
+                                            if (v.isEmpty) {
+                                              return 'Phone is required';
+                                            } else {
+                                              return null;
+                                            }
+                                          },
+                                        ),
+                                        fRatio: false,
+                                      ),
+                                      _dottedBorder(
+                                        constantDots,
+                                        DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            value: _chosenValues[i],
+                                            //elevation: 5,
+                                            isExpanded: true,
+                                            isDense: false,
+                                            elevation: 2,
+                                            dropdownColor: constantColor.withOpacity(0.85),
+                                            items: phoneType.map<
+                                                    DropdownMenuItem<String>>(
+                                                (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: mapPhoneType[value]
+                                                    .toString(),
+                                                child: Text(value,
+                                                    style: kNormalTextStyle),
+                                              );
+                                            }).toList(),
+                                            onChanged: (String value) {
+                                              setState(() {
+                                                _chosenValues[i] = value;
+                                              });
+                                            },
                                           ),
-                                          border: InputBorder.none,
-                                          hintText: 'phone'),
-                                      autocorrect: false,
-                                      keyboardType: TextInputType.phone,
-                                      style: kNormalTextStyle,
-                                      controller: phone[i],
-                                      validator: (v) {
-                                        if (v.isEmpty) {
-                                          return 'Phone is required';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                    ),
+                                        ),
+                                        fRatio: false,
+                                        width: 0.3,
+                                      ),
+                                    ],
                                   ),
                                 );
                               },
@@ -180,6 +223,7 @@ class _ContactADDState extends State<ContactADD> {
                                       setState(() {
                                         numPhones--;
                                         phone.removeLast();
+                                        _chosenValues.removeLast();
                                       });
                                     }),
                                 IconButton(
@@ -190,6 +234,7 @@ class _ContactADDState extends State<ContactADD> {
                                       setState(() {
                                         numPhones++;
                                         phone.add(TextEditingController());
+                                        _chosenValues.add('1');
                                       });
                                     }),
                               ]),
@@ -228,7 +273,8 @@ class _ContactADDState extends State<ContactADD> {
                   color: constantColor,
                   press: () {
                     if (contactKey.currentState.validate()) {
-                      uploadContact(name.text, email.text, phone, notes.text);
+                      uploadContact(name.text, email.text, phone, _chosenValues,
+                          notes.text);
                     } else {
                       snackBarCustom(context, Colors.white, Colors.transparent,
                           'Not valid data');
@@ -241,18 +287,26 @@ class _ContactADDState extends State<ContactADD> {
     );
   }
 
-  Future<ContactModel> uploadContact(String name, String email,
-      List<TextEditingController> phones, String notes) async {
+  Future<ContactModel> uploadContact(
+      String name,
+      String email,
+      List<TextEditingController> phones,
+      List<String> types,
+      String notes) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     List<Map<String, dynamic>> phonesConverter() {
       List<Map<String, dynamic>> phoneList = [];
       for (int i = 0; i < phones.length; i++) {
         if (phones[i].text.isNotEmpty) {
-          phoneList.add({'value': phones[i].text.isEmpty, 'type_id': i + 1});
+          phoneList.add({
+            'value': phones[i].text,
+            'type_id': types[i],
+          });
         }
       }
-      print(phoneList);
+      // print(phoneList);
+      // print(types);
       return phoneList;
     }
 
@@ -285,13 +339,18 @@ class _ContactADDState extends State<ContactADD> {
       snackBarCustom(
           context, Colors.white, Colors.transparent, response.body.toString());
     }
+    return null;
   }
 
   void checkUpdateMode() {
     if (widget.nameUpdate != null) {
       name.text = widget.nameUpdate;
       email.text = widget.emailUpdate;
-      phone[0].text = widget.phoneUpdate;
+      for (int i = 0; i<widget.phoneUpdate.length; i++) {
+        phone[i].text = widget.phoneUpdate[i];
+        _chosenValues.add(widget.typeUpdate[i].toString());
+        phone.add(TextEditingController());
+      }
       notes.text = widget.notesUpdate;
     }
   }
