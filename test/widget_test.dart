@@ -7,13 +7,18 @@
 
 
 
+import 'package:conca/Log_in/log_in_page.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 void main() {
-  // testWidgets('App Initialize', (WidgetTester tester) async {
-  //   // Build our app and trigger a frame.
-  //   await tester.pumpWidget(MyApp());
-  //   // make sure it went to log In with no errors
-  //   expect(find.text('LOG IN'), findsNWidgets(2));
-  //
-  //   Timer(const Duration(seconds: 3), () {});
-  // });
+group('basic test', () {
+  testWidgets('App Initialize', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(LogInPage());
+    // make sure it went to log In with no errors
+    expect(find.text('LOG IN'), findsNWidgets(2));
+
+    await tester.pumpAndSettle();
+  });
+});
 }
