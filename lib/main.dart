@@ -1,11 +1,11 @@
+import 'package:conca/Log_in/log_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'LogIN/LoginPage.dart';
 
 void main() {
   runApp(MyApp());
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+    statusBarColor: Colors.transparent,
   ));
 }
 
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: LogInPage(),
     );
   }
 }

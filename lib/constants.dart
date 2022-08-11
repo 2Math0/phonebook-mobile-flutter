@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'package:conca/widgets/snack_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
-import 'model/alpha_icons_generator.dart';
+import 'package:conca/model/alpha_icons_generator.dart';
+
 const estimatedHeight = 1100.00;
 const estimatedWidth = 500.00;
 const kAccentColor = Color(0xFF4ad194);
@@ -20,6 +20,8 @@ const kNormalTextStyle = TextStyle(
   fontFamily: 'Balsamiq',
   color: Colors.black,
 );
+
+// Review :: Paths of assets and images.
 const API_URL = 'https://phonebook-be.herokuapp.com/api/';
 final Map<String, String> kJsonAPP = {
   'Content-Type': 'application/json',
@@ -87,8 +89,8 @@ void launchingLinks(String l, BuildContext context, String type) async {
   // sms for messages
   // mailto for sending emails
   String url = '$type:$l';
-  if (await UrlLauncher.canLaunch(url)) {
-    await UrlLauncher.launch(url);
+  if (await UrlLauncher.canLaunchUrl(Uri.parse(url))) {
+    await UrlLauncher.launchUrl(Uri.parse(url));
   } else {
     snackBarCustom(
         context, Colors.white, Colors.transparent, 'Could not launch $l');

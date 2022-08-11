@@ -1,19 +1,31 @@
+/*
+This page has the design and the response of registering
+Design:
+First it has the parent Background Class from background_register.dart
+its child is a column with Painted Text, SVG, two inputs one for user name and other for password
+finally a navigator to Log In if user already has one
+
+Response:
+first it initializes shared Preferences
+then send email and pass to API in a Map and save this map in Shared Preferences
+finally, Navigates to Contacts page
+
+ */
+
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:conca/Contacts/contacts.dart';
-import 'package:conca/LogIN/LoginPage.dart';
-import 'package:conca/widgets/login_input_field.dart';
-import 'package:conca/widgets/password_input_field.dart';
+import 'package:conca/widgets/dotted_input_field.dart';
+import 'package:conca/widgets/dotted_obscure_field.dart';
 import 'package:conca/widgets/rounded_button.dart';
 import 'package:conca/widgets/snack_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import '../constants.dart';
-import '../widgets/rounded_button.dart';
-import 'components/background_register.dart';
+import 'package:conca/constants.dart';
+import 'package:conca/registering/components/background_register.dart';
+import '../Log_in/log_in_page.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -83,7 +95,9 @@ class _RegisterState extends State<Register> {
                           icon: Icons.person,
                           inputType: TextInputType.emailAddress,
                           textController: emailController,
-                          validator: (value) {return emailValidation(value);},
+                          validator: (value) {
+                            return emailValidation(value);
+                          },
                           bgColor: kGearYellow,
                           textColor: Colors.black,
                           iconColor: kGearOrange,
@@ -97,7 +111,9 @@ class _RegisterState extends State<Register> {
                           hint: 'Password',
                           icon: Icons.lock,
                           textController: passwordController,
-                          validator: (value) {return passwordValidation(value);},
+                          validator: (value) {
+                            return passwordValidation(value);
+                          },
                           bgColor: kGearYellow,
                           textColor: Colors.black,
                           iconColor: kGearOrange,
@@ -122,7 +138,7 @@ class _RegisterState extends State<Register> {
                                   }
                                 });
                               });
-                              registerCore(emailController.text,
+                              registerResponse(emailController.text,
                                   passwordController.text);
                             } else {
                               snackBarCustom(
@@ -164,8 +180,9 @@ class _RegisterState extends State<Register> {
                         onPressed: () {
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                  builder: (BuildContext context) => LoginPage()),
-                                  (Route<dynamic> route) => false);
+                                  builder: (BuildContext context) =>
+                                      LogInPage()),
+                              (Route<dynamic> route) => false);
                         },
                       ),
                     ],
@@ -176,7 +193,7 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  registerCore(String email, pass) async {
+  void registerResponse(String email, pass) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     Map data = {'email': email, 'password': pass, 'name': getRandomString(7)};
     var jsonResponse;

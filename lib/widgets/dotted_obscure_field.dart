@@ -1,8 +1,9 @@
 import 'package:conca/widgets/dotted_Field.dart';
 import 'package:flutter/material.dart';
-import '../constants.dart';
 
-class NormalInputField extends StatefulWidget {
+import 'package:conca/constants.dart';
+
+class PasswordInputField extends StatefulWidget {
   final String hint;
   final IconData icon;
   final TextInputType inputType;
@@ -14,7 +15,7 @@ class NormalInputField extends StatefulWidget {
   final Color iconColor;
   final Color cursorColor;
 
-  const NormalInputField(
+  const PasswordInputField(
       {@required this.hint,
       @required this.icon,
       this.inputType = TextInputType.text,
@@ -26,22 +27,23 @@ class NormalInputField extends StatefulWidget {
       this.iconColor = Colors.black, this.cursorColor = kDarkAccentColor});
 
   @override
-  _NormalInputFieldState createState() => _NormalInputFieldState();
+  _PasswordInputFieldState createState() => _PasswordInputFieldState();
 }
 
-class _NormalInputFieldState extends State<NormalInputField> {
+class _PasswordInputFieldState extends State<PasswordInputField> {
+  bool hidePassword = true;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return InputDottedBorder(
+    return DottedBorderWidget(
       background: widget.bgColor,
       borderColor: widget.borderColor,
       random: stepOneIgnoreOne(randomDoubles(), size.width),
       myChild: TextFormField(
         cursorColor: widget.cursorColor,
         keyboardType: widget.inputType,
-        // obscureText: hidePassword,
-        // autofocus: !widget.isPasswordFormat,
+        obscureText: hidePassword,
+        autofocus: false,
         controller: widget.textController,
         validator: widget.validator,
         decoration: InputDecoration(
@@ -49,18 +51,15 @@ class _NormalInputFieldState extends State<NormalInputField> {
             widget.icon,
             color: widget.iconColor,
           ),
-          // suffixIcon: widget.isPasswordFormat
-          //     ? IconButton(
-          //         onPressed: () {
-          //           setState(() {
-          //             hidePassword = !hidePassword;
-          //           });
-          //         },
-          //         icon: Icon(
-          //             hidePassword ? Icons.visibility : Icons.visibility_off),
-          //         color: Colors.black.withOpacity(!hidePassword ? 0.4 : 1),
-          //       )
-          //     : null,
+          suffixIcon: IconButton(
+            onPressed: () {
+              setState(() {
+                hidePassword = !hidePassword;
+              });
+            },
+            icon: Icon(hidePassword ? Icons.visibility : Icons.visibility_off),
+            color: widget.iconColor.withOpacity(!hidePassword ? 0.4 : 1),
+          ),
           hintText: widget.hint,
           hintStyle: TextStyle(color: Colors.black38),
           border: InputBorder.none,

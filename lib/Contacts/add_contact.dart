@@ -34,9 +34,9 @@ class ContactADD extends StatefulWidget {
 
 class _ContactADDState extends State<ContactADD> {
   List<double> constantDots = stepOneIgnoreOne(randomDoubles(), 300);
-  InputDottedBorder _dottedBorder(List<double> ran, Widget w,
+  DottedBorderWidget _dottedBorder(List<double> ran, Widget w,
           {bool fRatio = true, double width = 0.5}) =>
-      InputDottedBorder(
+      DottedBorderWidget(
         myChild: w,
         background: Colors.white,
         borderColor: Colors.black,
