@@ -1,5 +1,16 @@
+/*
+This one consider as the main home Page
+
+It builds a list of saved contacts also has fetching and delete on long press
+also a fab to add new contacts
+
+The contact has a rule to follow the color as its alert dialog and contact screen will has the same represented color in ContactsPage
+
+along the page if user needs to refresh the _isLoading bool will be true and so the screen will has Progress indicator child only
+therefore any time user delete add refresh the _isLoading will change
+ */
+
 import 'dart:convert';
-import 'dart:ui';
 import 'package:conca/Contacts/add_contact.dart';
 import 'package:conca/constants.dart';
 import 'package:conca/Contacts/contact_card.dart';
@@ -20,7 +31,7 @@ class _ContactsPageState extends State<ContactsPage> {
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    _fetchData;
   }
 
   @override
@@ -34,9 +45,7 @@ class _ContactsPageState extends State<ContactsPage> {
           : SafeArea(
               child: Container(
                 child: RefreshIndicator(
-                  onRefresh: () {
-                    return _fetchData();
-                  },
+                  onRefresh: () => _fetchData,
                   child: ListView.builder(
                     padding: EdgeInsets.all(6),
                     itemCount:
@@ -189,7 +198,7 @@ class _ContactsPageState extends State<ContactsPage> {
     );
   }
 
-  Future<void> _fetchData() async {
+  Future<void> get _fetchData async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     final response = await http.get(
@@ -200,15 +209,11 @@ class _ContactsPageState extends State<ContactsPage> {
     setState(() {
       _contactsList = data['data'];
     });
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
   Future<void> deleteData(int n) async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token");
     final response = await http.delete(Uri.parse('${API_URL}contacts/$n'),
@@ -217,6 +222,7 @@ class _ContactsPageState extends State<ContactsPage> {
     setState(() {
       _contactsList = data['data'];
     });
-    _fetchData();
+    // top update data after editing
+    _fetchData;
   }
 }

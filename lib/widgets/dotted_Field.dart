@@ -2,14 +2,14 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class InputDottedBorder extends StatelessWidget {
+class DottedBorderWidget extends StatelessWidget {
   final Widget myChild;
   final Color background;
   final Color borderColor;
   final List<double> random;
   final bool fixedWidthRatio;
   final double chosenWidth;
-  const InputDottedBorder({
+  const DottedBorderWidget({
     this.myChild,
     this.background,
     this.borderColor,

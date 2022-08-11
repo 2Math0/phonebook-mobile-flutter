@@ -67,7 +67,6 @@ class _BackgroundState extends State<Background> {
       _bottomColor = kGearYellow.withOpacity(0.3);
       _rightColor = kGearGrey.withOpacity(0.4);
       _leftColor = kGearOrange.withOpacity(0.2);
-
     });
   }
 

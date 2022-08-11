@@ -26,13 +26,12 @@ class _BackgroundState extends State<Background> {
 
   @override
   void initState() {
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         // Positioned animation
-        _bottomTop = estimatedHeight *0.75;
-        _leftRight = estimatedWidth *0.2;
-        _rightLeft = estimatedWidth *0.3;
+        _bottomTop = estimatedHeight * 0.75;
+        _leftRight = estimatedWidth * 0.2;
+        _rightLeft = estimatedWidth * 0.3;
         //Color animations
         _bottomColor = kSemiDarkAccentColor.withOpacity(0.8);
         _leftColor = kDarkAccentColor.withOpacity(0.8);
@@ -41,24 +40,26 @@ class _BackgroundState extends State<Background> {
     });
     super.initState();
   }
+
   /*
   Test cases for animation
   Two Buttons run two methods
   1. to apply animation (updateLayout)
   2. resetting animation (reset)
    */
-  void updateLayout(){
+  void updateLayout() {
     setState(() {
-      _bottomTop = estimatedHeight *0.75;
-      _leftRight = estimatedWidth *0.2;
-      _rightLeft = estimatedWidth *0.3;
+      _bottomTop = estimatedHeight * 0.75;
+      _leftRight = estimatedWidth * 0.2;
+      _rightLeft = estimatedWidth * 0.3;
       //
       _bottomColor = kSemiDarkAccentColor.withOpacity(0.8);
       _leftColor = kDarkAccentColor.withOpacity(0.8);
       _rightColor = kAccentColor.withOpacity(1);
     });
   }
-  void reset(){
+
+  void reset() {
     setState(() {
       _bottomTop = estimatedHeight * 1.5;
       _leftRight = estimatedWidth;
@@ -67,7 +68,6 @@ class _BackgroundState extends State<Background> {
       _bottomColor = kSemiDarkAccentColor.withOpacity(0.3);
       _leftColor = kDarkAccentColor.withOpacity(0.3);
       _rightColor = kAccentColor.withOpacity(0.4);
-
     });
   }
 
@@ -81,7 +81,6 @@ class _BackgroundState extends State<Background> {
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
-
             // the Bottom circle
             AnimatedPositioned(
               duration: Duration(milliseconds: 1000),

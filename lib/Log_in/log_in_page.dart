@@ -1,23 +1,37 @@
+/*
+This page has the design and the response of Log In
+Design:
+First it has the parent Background Class from background_logIn.dart
+its child is a column with Painted Text, SVG, two inputs one for user name and other for password
+finally a navigator to Register if user need to create one first.
+
+Response:
+first it initializes shared Preferences
+then send email and pass to API in a Map and save this map in Shared Preferences
+finally, Navigates to Contacts page
+
+ */
+
 import 'dart:convert';
-import 'package:conca/widgets/password_input_field.dart';
+import 'package:conca/Log_in/components/background_logIn.dart';
+import 'package:conca/widgets/dotted_obscure_field.dart';
 import 'package:conca/Contacts/contacts.dart';
 import 'package:conca/widgets/snack_bar.dart';
 import 'package:http/http.dart' as http;
-import 'package:conca/Registering/RegisterPage.dart';
+import 'package:conca/registering/register_page.dart';
 import 'package:conca/constants.dart';
 import 'package:conca/widgets/rounded_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'components/background_logIn.dart';
-import '../widgets/login_input_field.dart';
+import 'package:conca/widgets/dotted_input_field.dart';
 
-class LoginPage extends StatefulWidget {
+class LogInPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LogInPageState createState() => _LogInPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LogInPageState extends State<LogInPage> {
   bool _isLoading = false;
   final loginKey = GlobalKey<FormState>();
   var errorMsg;
@@ -26,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    // Review :: Splash Screen
     // _isLoading = true;
     Future.delayed(Duration.zero, () async {
       SharedPreferences sharedPreferences =
@@ -37,9 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                 builder: (BuildContext context) => ContactsPage()),
             (Route<dynamic> route) => false);
       } else {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
       }
     });
   }
@@ -102,7 +115,9 @@ class _LoginPageState extends State<LoginPage> {
                     icon: Icons.person,
                     inputType: TextInputType.emailAddress,
                     textController: emailController,
-                    validator: (v){return emailValidation(v);},
+                    validator: (v) {
+                      return emailValidation(v);
+                    },
                   ),
                   SizedBox(
                     height: 40,
@@ -111,7 +126,9 @@ class _LoginPageState extends State<LoginPage> {
                     hint: 'Password',
                     icon: Icons.lock,
                     textController: passwordController,
-                    validator: (v){return passwordValidation(v);},
+                    validator: (v) {
+                      return passwordValidation(v);
+                    },
                   ),
                   SizedBox(
                     height: 40,
@@ -134,7 +151,8 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       });
                     });
-                    loginCore(emailController.text, passwordController.text);
+                    loginResponse(
+                        emailController.text, passwordController.text);
                   } else {
                     snackBarCustom(
                       context,
@@ -183,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  loginCore(String email, String pass) async {
+  void loginResponse(String email, String pass) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     Map<String, String> data = {"email": '$email', "password": "$pass"};
     var jsonResponse;
