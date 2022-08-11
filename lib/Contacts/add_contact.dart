@@ -5,9 +5,7 @@ import 'package:conca/model/phone_type.dart';
 import 'package:conca/widgets/dotted_Field.dart';
 import 'package:conca/widgets/rounded_button.dart';
 import 'package:conca/widgets/snack_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -375,8 +373,8 @@ class ContactModel {
 }
 
 class PhoneModel {
-  final int type_id;
+  final int typeId;
   final String number;
 
-  PhoneModel({this.type_id = 1, this.number});
+  PhoneModel({this.typeId = 1, this.number});
 }
