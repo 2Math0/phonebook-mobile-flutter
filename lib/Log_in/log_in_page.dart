@@ -11,7 +11,6 @@ then send email and pass to API in a Map and save this map in Shared Preferences
 finally, Navigates to Contacts page
 
  */
-
 import 'dart:convert';
 import 'package:conca/Log_in/components/background_logIn.dart';
 import 'package:conca/widgets/dotted_obscure_field.dart';
@@ -55,6 +54,11 @@ class _LogInPageState extends State<LogInPage> {
         setState(() => _isLoading = false);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
