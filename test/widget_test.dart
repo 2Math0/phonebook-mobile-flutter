@@ -10,8 +10,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:conca/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('App Initialize', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());
+    expect(find.text('LOG IN'), findsOneWidget);
   });
 }
