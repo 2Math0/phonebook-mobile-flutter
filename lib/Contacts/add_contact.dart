@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:conca/constants.dart';
+
 import 'package:conca/Contacts/contacts.dart';
+import 'package:conca/constants.dart';
 import 'package:conca/model/phone_type.dart';
 import 'package:conca/widgets/dotted_Field.dart';
 import 'package:conca/widgets/rounded_button.dart';
@@ -19,16 +20,18 @@ class ContactADD extends StatefulWidget {
   final int? id;
 
   const ContactADD(
-      {this.nameUpdate,
+      {Key? key,
+      this.nameUpdate,
       this.emailUpdate,
       this.phoneUpdate,
       this.notesUpdate,
       this.updateMode = false,
       this.id,
-      this.typeUpdate});
+      this.typeUpdate})
+      : super(key: key);
 
   @override
-  _ContactADDState createState() => _ContactADDState();
+  State<ContactADD> createState() => _ContactADDState();
 }
 
 class _ContactADDState extends State<ContactADD> {
@@ -46,12 +49,12 @@ class _ContactADDState extends State<ContactADD> {
   Color constantColor = randomColor();
   final contactKey = GlobalKey<FormState>();
   int numPhones = 1;
-  final TextEditingController name = new TextEditingController();
-  final TextEditingController email = new TextEditingController();
+  final TextEditingController name = TextEditingController();
+  final TextEditingController email = TextEditingController();
   final List<TextEditingController> phone = [TextEditingController()];
-  final TextEditingController notes = new TextEditingController();
+  final TextEditingController notes = TextEditingController();
   List<String> phones = [];
-  List<String> _chosenValues = ['1'];
+  List<String> chosenValues = ['1'];
   String? nameHolder;
   @override
   void initState() {
@@ -78,7 +81,7 @@ class _ContactADDState extends State<ContactADD> {
                       size: 160,
                       color: constantColor,
                     ),
-                    SizedBox(height: 64),
+                    const SizedBox(height: 64),
                     Form(
                       key: contactKey,
                       child: Column(
@@ -110,7 +113,7 @@ class _ContactADDState extends State<ContactADD> {
                               },
                             ),
                           ),
-                          SizedBox(height: 32),
+                          const SizedBox(height: 32),
                           _dottedBorder(
                             constantDots,
                             TextFormField(
@@ -177,7 +180,7 @@ class _ContactADDState extends State<ContactADD> {
                                         constantDots,
                                         DropdownButtonHideUnderline(
                                           child: DropdownButton<String>(
-                                            value: _chosenValues[i],
+                                            value: chosenValues[i],
                                             //elevation: 5,
                                             isExpanded: true,
                                             isDense: false,
@@ -196,7 +199,7 @@ class _ContactADDState extends State<ContactADD> {
                                             }).toList(),
                                             onChanged: (String? value) {
                                               setState(() {
-                                                _chosenValues[i] = value!;
+                                                chosenValues[i] = value!;
                                               });
                                             },
                                           ),
@@ -216,29 +219,29 @@ class _ContactADDState extends State<ContactADD> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 IconButton(
-                                    icon: Icon(Icons.exposure_minus_1),
+                                    icon: const Icon(Icons.exposure_minus_1),
                                     color: constantColor,
                                     iconSize: 28.0,
                                     onPressed: () {
                                       setState(() {
                                         numPhones--;
                                         phone.removeLast();
-                                        _chosenValues.removeLast();
+                                        chosenValues.removeLast();
                                       });
                                     }),
                                 IconButton(
-                                    icon: Icon(Icons.add),
+                                    icon: const Icon(Icons.add),
                                     color: constantColor,
                                     iconSize: 28.0,
                                     onPressed: () {
                                       setState(() {
                                         numPhones++;
                                         phone.add(TextEditingController());
-                                        _chosenValues.add('1');
+                                        chosenValues.add('1');
                                       });
                                     }),
                               ]),
-                          SizedBox(height: 32),
+                          const SizedBox(height: 32),
                           _dottedBorder(
                             constantDots,
                             TextFormField(
@@ -256,7 +259,7 @@ class _ContactADDState extends State<ContactADD> {
                               controller: notes,
                             ),
                           ),
-                          SizedBox(height: 128),
+                          const SizedBox(height: 128),
                         ],
                       ),
                     ),
@@ -273,7 +276,7 @@ class _ContactADDState extends State<ContactADD> {
                   color: constantColor,
                   press: () {
                     if (contactKey.currentState!.validate()) {
-                      uploadContact(name.text, email.text, phone, _chosenValues,
+                      uploadContact(name.text, email.text, phone, chosenValues,
                           notes.text);
                     } else {
                       snackBarCustom(context, Colors.white, Colors.transparent,
@@ -318,24 +321,28 @@ class _ContactADDState extends State<ContactADD> {
     };
     final response = widget.updateMode
         ? await http.patch(
-            Uri.parse('${API_URL}contacts/${widget.id.toString()}'),
+            Uri.parse('${apiURL}contacts/${widget.id.toString()}'),
             headers: headersToken(token),
             body: json.encode({
               'email': email,
               'name': name,
               'notes': notes,
             }))
-        : await http.post(Uri.parse('${API_URL}contacts'),
+        : await http.post(Uri.parse('${apiURL}contacts'),
             headers: headersToken(token), body: json.encode(jsonBody));
-    print(jsonBody);
+    responseChecker(response);
+    return null;
+  }
+
+  ContactModel? responseChecker(response) {
     if (response.statusCode == 200) {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (BuildContext context) => ContactsPage()),
           (Route<dynamic> route) => false);
-      print(response.body);
+      // print(response.body);
       return ContactModel.fromJson(jsonDecode(response.body));
     } else {
-      print("The error message is: ${response.body}");
+      // print("The error message is: ${response.body}");
       snackBarCustom(
           context, Colors.white, Colors.transparent, response.body.toString());
     }
@@ -347,7 +354,7 @@ class _ContactADDState extends State<ContactADD> {
     email.text = widget.emailUpdate!;
     for (int i = 0; i < widget.phoneUpdate!.length; i++) {
       phone[i].text = widget.phoneUpdate![i];
-      _chosenValues.add(widget.typeUpdate![i].toString());
+      chosenValues.add(widget.typeUpdate![i].toString());
       phone.add(TextEditingController());
     }
     notes.text = widget.notesUpdate!;

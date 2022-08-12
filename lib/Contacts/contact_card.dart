@@ -13,24 +13,30 @@ class ContactCard extends StatelessWidget {
   final Map contactDetails;
   final Color mainIconColor;
   const ContactCard(
-      {required this.contactDetails,
-      this.mainIconColor = kSemiDarkAccentColor});
+      {Key? key,
+      required this.contactDetails,
+      this.mainIconColor = kSemiDarkAccentColor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    void snackBarMessage(response) => snackBarCustom(
+        context, Colors.red, Colors.transparent, response.body.toString(),
+        textColor: Colors.white);
     Map<String, List>? _phonesSeparator() {
-      List<String> _phonesList = [];
-      List<int> _phonesTypes = [];
+      List<String> phonesList = [];
+      List<int> phonesTypes = [];
       int l = contactDetails["phones"].length;
-      if(l>0) {
+      if (l > 0) {
         for (int i = 0; i < l; i++) {
-          _phonesList.add(contactDetails["phones"][i]['value']);
-          _phonesTypes.add(contactDetails["phones"][i]['type_id']);
+          phonesList.add(contactDetails["phones"][i]['value']);
+          phonesTypes.add(contactDetails["phones"][i]['type_id']);
         }
-        return {'numbers': _phonesList, 'types': _phonesTypes};
+        return {'numbers': phonesList, 'types': phonesTypes};
       }
       return null;
     }
+
     Map<String, List>? phonesSeparator = _phonesSeparator();
     void handleClick(String value) {
       switch (value) {
@@ -54,12 +60,10 @@ class ContactCard extends StatelessWidget {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             String? token = prefs.getString("token");
             final response = await http.delete(
-              Uri.parse('${API_URL}contacts/${contactDetails['id']}'),
+              Uri.parse('${apiURL}contacts/${contactDetails['id']}'),
               headers: headersToken(token),
             );
-            snackBarCustom(context, Colors.red, Colors.transparent,
-                response.body.toString(),
-                textColor: Colors.white);
+            snackBarMessage(response);
           });
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
@@ -76,7 +80,7 @@ class ContactCard extends StatelessWidget {
         shadowColor: Colors.transparent,
         actions: <Widget>[
           PopupMenuButton<String>(
-            padding: EdgeInsets.all(32),
+            padding: const EdgeInsets.all(32),
             onSelected: handleClick,
             icon: Icon(
               Icons.menu,
@@ -110,7 +114,7 @@ class ContactCard extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 64),
+              const SizedBox(height: 64),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -119,16 +123,14 @@ class ContactCard extends StatelessWidget {
                     size: 32,
                     color: mainIconColor,
                   ),
-                  SizedBox(width: 32),
+                  const SizedBox(width: 32),
                   Text(
-                    contactDetails['name'] == null
-                        ? ''
-                        : contactDetails['name'],
+                    contactDetails['name'] ?? '',
                     style: kNormalTextStyle.copyWith(letterSpacing: 4),
                   ),
                 ],
               ),
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
               RawMaterialButton(
                 onPressed: () =>
                     launchingLinks(contactDetails['email'], context, 'mailto'),
@@ -140,16 +142,13 @@ class ContactCard extends StatelessWidget {
                       size: 32,
                       color: mainIconColor,
                     ),
-                    SizedBox(width: 32),
-                    Text(
-                        contactDetails['email'] == null
-                            ? 'no Email'
-                            : contactDetails['email'],
+                    const SizedBox(width: 32),
+                    Text(contactDetails['email'] ?? 'no Email',
                         style: kNormalTextStyle),
                   ],
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               ListView.builder(
                 itemBuilder: (BuildContext context, i) {
                   return Padding(
@@ -165,7 +164,7 @@ class ContactCard extends StatelessWidget {
                             size: 32,
                             color: mainIconColor,
                           ),
-                          SizedBox(width: 32),
+                          const SizedBox(width: 32),
                           Text(
                             '${contactDetails['phones'][i]['value']} - ${mapPhoneTypeViewer[contactDetails['phones'][i]['type_id']]}',
                             style: kNormalTextStyle,
@@ -179,7 +178,7 @@ class ContactCard extends StatelessWidget {
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
               ),
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -188,11 +187,9 @@ class ContactCard extends StatelessWidget {
                     size: 32,
                     color: mainIconColor,
                   ),
-                  SizedBox(width: 32),
+                  const SizedBox(width: 32),
                   Text(
-                    contactDetails['notes'] == null
-                        ? 'No notes for this contact'
-                        : contactDetails['notes'],
+                    contactDetails['notes'] ?? 'No notes for this contact',
                     style: kNormalTextStyle,
                     softWrap: true,
                   ),

@@ -12,30 +12,34 @@ finally, Navigates to Contacts page
 
  */
 import 'dart:convert';
-import 'package:conca/Log_in/components/background_logIn.dart';
-import 'package:conca/widgets/dotted_obscure_field.dart';
+import 'dart:developer';
+
 import 'package:conca/Contacts/contacts.dart';
-import 'package:conca/widgets/snack_bar.dart';
-import 'package:http/http.dart' as http;
-import 'package:conca/registering/register_page.dart';
+import 'package:conca/Log_in/components/background_logIn.dart';
 import 'package:conca/constants.dart';
-import 'package:conca/widgets/rounded_button.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:conca/registering/register_page.dart';
 import 'package:conca/widgets/dotted_input_field.dart';
+import 'package:conca/widgets/dotted_obscure_field.dart';
+import 'package:conca/widgets/rounded_button.dart';
+import 'package:conca/widgets/snack_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogInPage extends StatefulWidget {
+  const LogInPage({Key? key}) : super(key: key);
+
   @override
-  _LogInPageState createState() => _LogInPageState();
+  State<LogInPage> createState() => _LogInPageState();
 }
 
 class _LogInPageState extends State<LogInPage> {
   bool _isLoading = false;
   final loginKey = GlobalKey<FormState>();
-  var errorMsg;
-  final TextEditingController emailController = new TextEditingController();
-  final TextEditingController passwordController = new TextEditingController();
+  dynamic errorMsg;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -46,10 +50,7 @@ class _LogInPageState extends State<LogInPage> {
           await SharedPreferences.getInstance();
       String? token = sharedPreferences.getString('token');
       if (token != null) {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (BuildContext context) => ContactsPage()),
-            (Route<dynamic> route) => false);
+        contactsNav;
       } else {
         setState(() => _isLoading = false);
       }
@@ -65,9 +66,9 @@ class _LogInPageState extends State<LogInPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     if (_isLoading) {
-      return Center(
+      return const Center(
           child: CircularProgressIndicator(
-        valueColor: new AlwaysStoppedAnimation<Color>(kDarkAccentColor),
+        valueColor: AlwaysStoppedAnimation<Color>(kDarkAccentColor),
       ));
     } else {
       return Background(
@@ -91,7 +92,7 @@ class _LogInPageState extends State<LogInPage> {
                         ..strokeCap = StrokeCap.butt,
                     ),
                   ),
-                  Text(
+                  const Text(
                     'LOG IN',
                     style: TextStyle(
                       fontSize: 48,
@@ -108,7 +109,7 @@ class _LogInPageState extends State<LogInPage> {
                 width:
                     size.width < 600 ? (size.width * 0.5).roundToDouble() : 300,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 60,
               ),
               Form(
@@ -123,7 +124,7 @@ class _LogInPageState extends State<LogInPage> {
                       return emailValidation(v);
                     },
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 40,
                   ),
                   PasswordInputField(
@@ -134,20 +135,20 @@ class _LogInPageState extends State<LogInPage> {
                       return passwordValidation(v);
                     },
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 40,
-                  ),
+                  )
                 ]),
               ),
               RoundedButton(
                 text: 'Log In',
                 color: kDarkAccentColor,
                 press: () {
-                  print("Login pressed");
+                  log("Login pressed");
                   if (loginKey.currentState!.validate()) {
                     setState(() {
                       _isLoading = true;
-                      Future.delayed(Duration(seconds: 12), () {
+                      Future.delayed(const Duration(seconds: 12), () {
                         if (_isLoading == true) {
                           _isLoading = false;
                           snackBarCustom(context, kAccentColor,
@@ -170,7 +171,7 @@ class _LogInPageState extends State<LogInPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Not Signed in ?',
                     style: TextStyle(
                         fontSize: 16,
@@ -178,15 +179,6 @@ class _LogInPageState extends State<LogInPage> {
                         fontWeight: FontWeight.w600),
                   ),
                   ElevatedButton(
-                    child: Text(
-                      'Register',
-                      style: TextStyle(
-                        fontFamily: 'Balsamiq',
-                        color: kSemiDarkAccentColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.transparent),
@@ -195,6 +187,15 @@ class _LogInPageState extends State<LogInPage> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => Register()));
                     },
+                    child: const Text(
+                      'Register',
+                      style: TextStyle(
+                        fontFamily: 'Balsamiq',
+                        color: kSemiDarkAccentColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -207,25 +208,22 @@ class _LogInPageState extends State<LogInPage> {
 
   void loginResponse(String email, String pass) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    Map<String, String> data = {"email": '$email', "password": "$pass"};
-    var jsonResponse;
+    Map<String, String> data = {"email": email, "password": pass};
+    dynamic jsonResponse;
     var response = await http.post(
-      Uri.parse("${API_URL}login"),
+      Uri.parse("${apiURL}login"),
       body: json.encode(data),
       headers: kJsonAPP,
     );
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
-      print(jsonResponse);
+      log(jsonResponse.toString());
       if (jsonResponse != null) {
         setState(() {
           _isLoading = false;
         });
         sharedPreferences.setString("token", jsonResponse['token']);
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (BuildContext context) => ContactsPage()),
-            (Route<dynamic> route) => false);
+        contactsNav;
       }
     } else {
       errorMsg = response.body;
@@ -236,4 +234,9 @@ class _LogInPageState extends State<LogInPage> {
       });
     }
   }
+
+  void get contactsNav => Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+          builder: (BuildContext context) => const ContactsPage()),
+      (Route<dynamic> route) => false);
 }

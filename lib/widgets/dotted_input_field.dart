@@ -1,6 +1,6 @@
+import 'package:conca/constants.dart';
 import 'package:conca/widgets/dotted_Field.dart';
 import 'package:flutter/material.dart';
-import 'package:conca/constants.dart';
 
 class NormalInputField extends StatefulWidget {
   final String hint;
@@ -15,7 +15,8 @@ class NormalInputField extends StatefulWidget {
   final Color cursorColor;
 
   const NormalInputField(
-      {required this.hint,
+      {Key? key,
+      required this.hint,
       required this.icon,
       this.inputType = TextInputType.text,
       required this.textController,
@@ -24,10 +25,11 @@ class NormalInputField extends StatefulWidget {
       this.borderColor = Colors.black,
       this.textColor = Colors.black,
       this.iconColor = Colors.black,
-      this.cursorColor = kDarkAccentColor});
+      this.cursorColor = kDarkAccentColor})
+      : super(key: key);
 
   @override
-  _NormalInputFieldState createState() => _NormalInputFieldState();
+  State<NormalInputField> createState() => _NormalInputFieldState();
 }
 
 class _NormalInputFieldState extends State<NormalInputField> {
@@ -63,7 +65,7 @@ class _NormalInputFieldState extends State<NormalInputField> {
           //       )
           //     : null,
           hintText: widget.hint,
-          hintStyle: TextStyle(color: Colors.black38),
+          hintStyle: const TextStyle(color: Colors.black38),
           border: InputBorder.none,
         ),
         style: kNormalTextStyle.copyWith(color: widget.textColor),

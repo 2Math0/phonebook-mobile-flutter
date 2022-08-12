@@ -10,30 +10,31 @@ class DottedBorderWidget extends StatelessWidget {
   final bool fixedWidthRatio;
   final double? chosenWidth;
   const DottedBorderWidget({
+    Key? key,
     required this.myChild,
     required this.background,
     required this.borderColor,
     required this.random,
     this.fixedWidthRatio = true,
     this.chosenWidth,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return DottedBorder(
       color: borderColor,
       borderType: BorderType.RRect,
-      radius: Radius.circular(50),
+      radius: const Radius.circular(50),
       strokeWidth: 4,
       strokeCap: StrokeCap.round,
       dashPattern: random,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        width:
-            MediaQuery.of(context).size.width * (fixedWidthRatio ? 0.85 : chosenWidth!),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        width: MediaQuery.of(context).size.width *
+            (fixedWidthRatio ? 0.85 : chosenWidth!),
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.all(Radius.circular(50)),
+          borderRadius: const BorderRadius.all(Radius.circular(50)),
         ),
         child: myChild,
       ),
