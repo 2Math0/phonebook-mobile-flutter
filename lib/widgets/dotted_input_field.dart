@@ -1,5 +1,5 @@
 import 'package:conca/constants.dart';
-import 'package:conca/widgets/dotted_Field.dart';
+import 'package:conca/widgets/dotted_field.dart';
 import 'package:flutter/material.dart';
 
 class NormalInputField extends StatefulWidget {

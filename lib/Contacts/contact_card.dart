@@ -67,7 +67,7 @@ class ContactCard extends StatelessWidget {
           });
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (BuildContext context) => ContactsPage()),
+                  builder: (BuildContext context) => const ContactsPage()),
               (Route<dynamic> route) => false);
           break;
       }

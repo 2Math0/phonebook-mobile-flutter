@@ -1,7 +1,7 @@
 /*
 This page has the design and the response of Log In
 Design:
-First it has the parent Background Class from background_logIn.dart
+First it has the parent Background Class from background_log_in.dart
 its child is a column with Painted Text, SVG, two inputs one for user name and other for password
 finally a navigator to Register if user need to create one first.
 
@@ -15,7 +15,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:conca/Contacts/contacts.dart';
-import 'package:conca/Log_in/components/background_logIn.dart';
+import 'package:conca/Log_in/components/background_log_in.dart';
 import 'package:conca/constants.dart';
 import 'package:conca/registering/register_page.dart';
 import 'package:conca/widgets/dotted_input_field.dart';
@@ -184,8 +184,10 @@ class _LogInPageState extends State<LogInPage> {
                             MaterialStateProperty.all(Colors.transparent),
                         elevation: MaterialStateProperty.all(0)),
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Register()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Register()));
                     },
                     child: const Text(
                       'Register',

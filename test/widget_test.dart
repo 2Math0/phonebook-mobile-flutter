@@ -9,14 +9,14 @@ import 'package:conca/main.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-group('basic test', () {
-  testWidgets('App Initialize', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
-    // make sure it went to log In with no errors
-    expect(find.text('LOG IN'), findsNWidgets(2));
+  group('basic test', () {
+    testWidgets('App Initialize', (WidgetTester tester) async {
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(const MyApp());
+      // make sure it went to log In with no errors
+      expect(find.text('LOG IN'), findsNWidgets(2));
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
+    });
   });
-});
 }
