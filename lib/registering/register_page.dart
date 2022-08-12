@@ -127,7 +127,7 @@ class _RegisterState extends State<Register> {
                           text: 'Sign Up',
                           color: kGearOrange,
                           press: () {
-                            if (signUpKey.currentState.validate()) {
+                            if (signUpKey.currentState!.validate()) {
                               setState(() {
                                 _isLoading = true;
                                 Future.delayed(Duration(seconds: 12), () {

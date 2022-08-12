@@ -13,12 +13,12 @@ class ContactCard extends StatelessWidget {
   final Map contactDetails;
   final Color mainIconColor;
   const ContactCard(
-      {@required this.contactDetails,
+      {required this.contactDetails,
       this.mainIconColor = kSemiDarkAccentColor});
 
   @override
   Widget build(BuildContext context) {
-    Map<String, List> _phonesSeparator() {
+    Map<String, List>? _phonesSeparator() {
       List<String> _phonesList = [];
       List<int> _phonesTypes = [];
       int l = contactDetails["phones"].length;
@@ -29,11 +29,9 @@ class ContactCard extends StatelessWidget {
         }
         return {'numbers': _phonesList, 'types': _phonesTypes};
       }
-      else{
-        return null;
-      }
+      return null;
     }
-    Map<String, List> phonesSeparator = _phonesSeparator();
+    Map<String, List>? phonesSeparator = _phonesSeparator();
     void handleClick(String value) {
       switch (value) {
         case 'Edit':
@@ -42,8 +40,8 @@ class ContactCard extends StatelessWidget {
                 builder: (BuildContext context) => ContactADD(
                   nameUpdate: contactDetails['name'].toString(),
                   emailUpdate: contactDetails['email'],
-                  phoneUpdate: phonesSeparator['numbers'],
-                  typeUpdate: phonesSeparator['types'],
+                  phoneUpdate: phonesSeparator!['numbers'] as List<String>,
+                  typeUpdate: phonesSeparator['types'] as List<int>,
                   notesUpdate: contactDetails['notes'],
                   id: contactDetails['id'],
                   updateMode: true,
@@ -54,7 +52,7 @@ class ContactCard extends StatelessWidget {
         case 'Delete':
           Future.delayed(Duration.zero, () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
-            String token = prefs.getString("token");
+            String? token = prefs.getString("token");
             final response = await http.delete(
               Uri.parse('${API_URL}contacts/${contactDetails['id']}'),
               headers: headersToken(token),

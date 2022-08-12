@@ -200,7 +200,7 @@ class _ContactsPageState extends State<ContactsPage> {
 
   Future<void> get _fetchData async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
+    String? token = prefs.getString("token");
     final response = await http.get(
       Uri.parse('${API_URL}contacts'),
       headers: headersToken(token),
@@ -215,7 +215,7 @@ class _ContactsPageState extends State<ContactsPage> {
   Future<void> deleteData(int n) async {
     setState(() => _isLoading = true);
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
+    String? token = prefs.getString("token");
     final response = await http.delete(Uri.parse('${API_URL}contacts/$n'),
         headers: headersToken(token));
     final data = json.decode(response.body);

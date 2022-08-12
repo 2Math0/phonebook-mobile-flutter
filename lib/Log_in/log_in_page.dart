@@ -44,7 +44,7 @@ class _LogInPageState extends State<LogInPage> {
     Future.delayed(Duration.zero, () async {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      String token = sharedPreferences.getString('token');
+      String? token = sharedPreferences.getString('token');
       if (token != null) {
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
@@ -144,7 +144,7 @@ class _LogInPageState extends State<LogInPage> {
                 color: kDarkAccentColor,
                 press: () {
                   print("Login pressed");
-                  if (loginKey.currentState.validate()) {
+                  if (loginKey.currentState!.validate()) {
                     setState(() {
                       _isLoading = true;
                       Future.delayed(Duration(seconds: 12), () {

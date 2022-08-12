@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 class Background extends StatefulWidget {
   final Widget child;
   const Background({
-    @required this.child,
+    required this.child,
   });
 
   @override

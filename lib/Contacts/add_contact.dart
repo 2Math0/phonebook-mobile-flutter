@@ -10,13 +10,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContactADD extends StatefulWidget {
-  final String nameUpdate;
-  final String emailUpdate;
-  final List<String> phoneUpdate;
-  final List<int> typeUpdate;
-  final String notesUpdate;
+  final String? nameUpdate;
+  final String? emailUpdate;
+  final List<String>? phoneUpdate;
+  final List<int>? typeUpdate;
+  final String? notesUpdate;
   final bool updateMode;
-  final int id;
+  final int? id;
 
   const ContactADD(
       {this.nameUpdate,
@@ -24,7 +24,8 @@ class ContactADD extends StatefulWidget {
       this.phoneUpdate,
       this.notesUpdate,
       this.updateMode = false,
-      this.id, this.typeUpdate});
+      this.id,
+      this.typeUpdate});
 
   @override
   _ContactADDState createState() => _ContactADDState();
@@ -51,7 +52,7 @@ class _ContactADDState extends State<ContactADD> {
   final TextEditingController notes = new TextEditingController();
   List<String> phones = [];
   List<String> _chosenValues = ['1'];
-  String nameHolder;
+  String? nameHolder;
   @override
   void initState() {
     checkUpdateMode();
@@ -96,7 +97,7 @@ class _ContactADDState extends State<ContactADD> {
                               style: kNormalTextStyle,
                               controller: name,
                               validator: (v) {
-                                if (v.isEmpty) {
+                                if (v!.isEmpty) {
                                   return 'A name is required';
                                 } else {
                                   return null;
@@ -126,7 +127,7 @@ class _ContactADDState extends State<ContactADD> {
                               style: kNormalTextStyle,
                               controller: email,
                               validator: (v) {
-                                if (v.isEmpty) {
+                                if (v!.isEmpty) {
                                   return 'email is required';
                                 } else if (!v.contains('@')) {
                                   return 'enter valid email format';
@@ -163,7 +164,7 @@ class _ContactADDState extends State<ContactADD> {
                                           style: kNormalTextStyle,
                                           controller: phone[i],
                                           validator: (v) {
-                                            if (v.isEmpty) {
+                                            if (v!.isEmpty) {
                                               return 'Phone is required';
                                             } else {
                                               return null;
@@ -181,10 +182,11 @@ class _ContactADDState extends State<ContactADD> {
                                             isExpanded: true,
                                             isDense: false,
                                             elevation: 2,
-                                            dropdownColor: constantColor.withOpacity(0.85),
-                                            items: phoneType.map<
-                                                    DropdownMenuItem<String>>(
-                                                (String value) {
+                                            dropdownColor:
+                                                constantColor.withOpacity(0.85),
+                                            items: phoneType
+                                                .map<DropdownMenuItem<String>>(
+                                                    (String value) {
                                               return DropdownMenuItem<String>(
                                                 value: mapPhoneType[value]
                                                     .toString(),
@@ -192,9 +194,9 @@ class _ContactADDState extends State<ContactADD> {
                                                     style: kNormalTextStyle),
                                               );
                                             }).toList(),
-                                            onChanged: (String value) {
+                                            onChanged: (String? value) {
                                               setState(() {
-                                                _chosenValues[i] = value;
+                                                _chosenValues[i] = value!;
                                               });
                                             },
                                           ),
@@ -270,7 +272,7 @@ class _ContactADDState extends State<ContactADD> {
                   text: widget.updateMode ? 'UPDATE' : 'ADD',
                   color: constantColor,
                   press: () {
-                    if (contactKey.currentState.validate()) {
+                    if (contactKey.currentState!.validate()) {
                       uploadContact(name.text, email.text, phone, _chosenValues,
                           notes.text);
                     } else {
@@ -285,14 +287,14 @@ class _ContactADDState extends State<ContactADD> {
     );
   }
 
-  Future<ContactModel> uploadContact(
+  Future<ContactModel?> uploadContact(
       String name,
       String email,
       List<TextEditingController> phones,
       List<String> types,
       String notes) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
+    String? token = prefs.getString("token");
     List<Map<String, dynamic>> phonesConverter() {
       List<Map<String, dynamic>> phoneList = [];
       for (int i = 0; i < phones.length; i++) {
@@ -341,16 +343,14 @@ class _ContactADDState extends State<ContactADD> {
   }
 
   void checkUpdateMode() {
-    if (widget.nameUpdate != null) {
-      name.text = widget.nameUpdate;
-      email.text = widget.emailUpdate;
-      for (int i = 0; i<widget.phoneUpdate.length; i++) {
-        phone[i].text = widget.phoneUpdate[i];
-        _chosenValues.add(widget.typeUpdate[i].toString());
-        phone.add(TextEditingController());
-      }
-      notes.text = widget.notesUpdate;
+    name.text = widget.nameUpdate!;
+    email.text = widget.emailUpdate!;
+    for (int i = 0; i < widget.phoneUpdate!.length; i++) {
+      phone[i].text = widget.phoneUpdate![i];
+      _chosenValues.add(widget.typeUpdate![i].toString());
+      phone.add(TextEditingController());
     }
+    notes.text = widget.notesUpdate!;
   }
 }
 
@@ -360,7 +360,11 @@ class ContactModel {
   final List<PhoneModel> phone;
   final String notes;
 
-  ContactModel({this.email, this.name, this.phone, this.notes});
+  ContactModel(
+      {required this.email,
+      required this.name,
+      required this.phone,
+      required this.notes});
 
   factory ContactModel.fromJson(Map<String, dynamic> json) {
     return ContactModel(
@@ -376,5 +380,5 @@ class PhoneModel {
   final int typeId;
   final String number;
 
-  PhoneModel({this.typeId = 1, this.number});
+  PhoneModel({this.typeId = 1, required this.number});
 }

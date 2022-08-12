@@ -8,7 +8,7 @@ class PasswordInputField extends StatefulWidget {
   final IconData icon;
   final TextInputType inputType;
   final TextEditingController textController;
-  final String Function(String) validator;
+  final String? Function(String?)? validator;
   final Color bgColor;
   final Color borderColor;
   final Color textColor;
@@ -16,10 +16,10 @@ class PasswordInputField extends StatefulWidget {
   final Color cursorColor;
 
   const PasswordInputField(
-      {@required this.hint,
-      @required this.icon,
+      {required this.hint,
+      required this.icon,
       this.inputType = TextInputType.text,
-      this.textController,
+      required this.textController,
       this.validator,
       this.bgColor = kAccentColor,
       this.borderColor = Colors.black,

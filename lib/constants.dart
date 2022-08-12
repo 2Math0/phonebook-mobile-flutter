@@ -66,7 +66,7 @@ IconData contactIcon(listOfNames) => mdiIcons[listOfNames.isEmpty
     ? Icons.person
     : mdiIcons[
         listOfNames.isEmpty ? 'null' : listOfNames[0].toString().toUpperCase()];
-String emailValidation(value) {
+String? emailValidation(value) {
   if (value.isEmpty) {
     return 'Please Enter Email';
   } else if (!value.contains('@')) {
@@ -75,7 +75,7 @@ String emailValidation(value) {
   return null;
 }
 
-String passwordValidation(value) {
+String? passwordValidation(value) {
   if (value.isEmpty) {
     return 'Please Enter Password';
   } else if (value.length < 8) {

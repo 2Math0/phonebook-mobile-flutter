@@ -8,12 +8,12 @@ class DottedBorderWidget extends StatelessWidget {
   final Color borderColor;
   final List<double> random;
   final bool fixedWidthRatio;
-  final double chosenWidth;
+  final double? chosenWidth;
   const DottedBorderWidget({
-    this.myChild,
-    this.background,
-    this.borderColor,
-    this.random,
+    required this.myChild,
+    required this.background,
+    required this.borderColor,
+    required this.random,
     this.fixedWidthRatio = true,
     this.chosenWidth,
   });
@@ -30,7 +30,7 @@ class DottedBorderWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         width:
-            MediaQuery.of(context).size.width * (fixedWidthRatio ? 0.85 : chosenWidth),
+            MediaQuery.of(context).size.width * (fixedWidthRatio ? 0.85 : chosenWidth!),
         decoration: BoxDecoration(
           color: background,
           borderRadius: BorderRadius.all(Radius.circular(50)),
