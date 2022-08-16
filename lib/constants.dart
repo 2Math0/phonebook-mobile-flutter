@@ -1,9 +1,9 @@
 import 'dart:math';
-import 'package:conca/widgets/snack_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
 import 'package:conca/model/alpha_icons_generator.dart';
+import 'package:conca/widgets/snack_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 const estimatedHeight = 1100.00;
 const estimatedWidth = 500.00;
@@ -22,7 +22,7 @@ const kNormalTextStyle = TextStyle(
 );
 
 // Review :: Paths of assets and images.
-const API_URL = 'https://phonebook-be.herokuapp.com/api/';
+const apiURL = 'https://phonebook-be.herokuapp.com/api/';
 final Map<String, String> kJsonAPP = {
   'Content-Type': 'application/json',
   'Accept': 'application/json'
@@ -32,7 +32,7 @@ Color randomColor() =>
     Colors.primaries[Random().nextInt(Colors.primaries.length)];
 
 List<double> randomDoubles() {
-  var random = new Random();
+  var random = Random();
 
   double doubleInRange(Random source, num start, num end) =>
       source.nextDouble() * (end - start) + start;
@@ -59,14 +59,12 @@ Map<String, String> headersToken(token) {
   return headers;
 }
 
-IconData contactIcon(listOfNames) => mdiIcons[listOfNames.isEmpty
-            ? 'null'
-            : listOfNames[0].toString().toUpperCase()] ==
-        null
-    ? Icons.person
-    : mdiIcons[
-        listOfNames.isEmpty ? 'null' : listOfNames[0].toString().toUpperCase()];
-String emailValidation(value) {
+IconData contactIcon(listOfNames) =>
+    mdiIcons[listOfNames.isEmpty
+        ? 'null'
+        : listOfNames[0].toString().toUpperCase()] ??
+    Icons.person;
+String? emailValidation(value) {
   if (value.isEmpty) {
     return 'Please Enter Email';
   } else if (!value.contains('@')) {
@@ -75,7 +73,7 @@ String emailValidation(value) {
   return null;
 }
 
-String passwordValidation(value) {
+String? passwordValidation(value) {
   if (value.isEmpty) {
     return 'Please Enter Password';
   } else if (value.length < 8) {
@@ -89,8 +87,8 @@ void launchingLinks(String l, BuildContext context, String type) async {
   // sms for messages
   // mailto for sending emails
   String url = '$type:$l';
-  if (await UrlLauncher.canLaunchUrl(Uri.parse(url))) {
-    await UrlLauncher.launchUrl(Uri.parse(url));
+  if (await url_launcher.canLaunchUrl(Uri.parse(url))) {
+    await url_launcher.launchUrl(Uri.parse(url));
   } else {
     snackBarCustom(
         context, Colors.white, Colors.transparent, 'Could not launch $l');

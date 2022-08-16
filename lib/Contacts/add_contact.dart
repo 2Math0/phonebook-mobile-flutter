@@ -1,35 +1,37 @@
 import 'dart:convert';
-import 'package:conca/constants.dart';
+
 import 'package:conca/Contacts/contacts.dart';
+import 'package:conca/constants.dart';
 import 'package:conca/model/phone_type.dart';
-import 'package:conca/widgets/dotted_Field.dart';
+import 'package:conca/widgets/dotted_field.dart';
 import 'package:conca/widgets/rounded_button.dart';
 import 'package:conca/widgets/snack_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContactADD extends StatefulWidget {
-  final String nameUpdate;
-  final String emailUpdate;
-  final List<String> phoneUpdate;
-  final List<int> typeUpdate;
-  final String notesUpdate;
+  final String? nameUpdate;
+  final String? emailUpdate;
+  final List<String>? phoneUpdate;
+  final List<int>? typeUpdate;
+  final String? notesUpdate;
   final bool updateMode;
-  final int id;
+  final int? id;
 
   const ContactADD(
-      {this.nameUpdate,
+      {Key? key,
+      this.nameUpdate,
       this.emailUpdate,
       this.phoneUpdate,
       this.notesUpdate,
       this.updateMode = false,
-      this.id, this.typeUpdate});
+      this.id,
+      this.typeUpdate})
+      : super(key: key);
 
   @override
-  _ContactADDState createState() => _ContactADDState();
+  State<ContactADD> createState() => _ContactADDState();
 }
 
 class _ContactADDState extends State<ContactADD> {
@@ -47,13 +49,13 @@ class _ContactADDState extends State<ContactADD> {
   Color constantColor = randomColor();
   final contactKey = GlobalKey<FormState>();
   int numPhones = 1;
-  final TextEditingController name = new TextEditingController();
-  final TextEditingController email = new TextEditingController();
+  final TextEditingController name = TextEditingController();
+  final TextEditingController email = TextEditingController();
   final List<TextEditingController> phone = [TextEditingController()];
-  final TextEditingController notes = new TextEditingController();
+  final TextEditingController notes = TextEditingController();
   List<String> phones = [];
-  List<String> _chosenValues = ['1'];
-  String nameHolder;
+  List<String> chosenValues = ['1'];
+  String? nameHolder;
   @override
   void initState() {
     checkUpdateMode();
@@ -79,7 +81,7 @@ class _ContactADDState extends State<ContactADD> {
                       size: 160,
                       color: constantColor,
                     ),
-                    SizedBox(height: 64),
+                    const SizedBox(height: 64),
                     Form(
                       key: contactKey,
                       child: Column(
@@ -98,7 +100,7 @@ class _ContactADDState extends State<ContactADD> {
                               style: kNormalTextStyle,
                               controller: name,
                               validator: (v) {
-                                if (v.isEmpty) {
+                                if (v!.isEmpty) {
                                   return 'A name is required';
                                 } else {
                                   return null;
@@ -111,7 +113,7 @@ class _ContactADDState extends State<ContactADD> {
                               },
                             ),
                           ),
-                          SizedBox(height: 32),
+                          const SizedBox(height: 32),
                           _dottedBorder(
                             constantDots,
                             TextFormField(
@@ -128,7 +130,7 @@ class _ContactADDState extends State<ContactADD> {
                               style: kNormalTextStyle,
                               controller: email,
                               validator: (v) {
-                                if (v.isEmpty) {
+                                if (v!.isEmpty) {
                                   return 'email is required';
                                 } else if (!v.contains('@')) {
                                   return 'enter valid email format';
@@ -165,7 +167,7 @@ class _ContactADDState extends State<ContactADD> {
                                           style: kNormalTextStyle,
                                           controller: phone[i],
                                           validator: (v) {
-                                            if (v.isEmpty) {
+                                            if (v!.isEmpty) {
                                               return 'Phone is required';
                                             } else {
                                               return null;
@@ -178,15 +180,16 @@ class _ContactADDState extends State<ContactADD> {
                                         constantDots,
                                         DropdownButtonHideUnderline(
                                           child: DropdownButton<String>(
-                                            value: _chosenValues[i],
+                                            value: chosenValues[i],
                                             //elevation: 5,
                                             isExpanded: true,
                                             isDense: false,
                                             elevation: 2,
-                                            dropdownColor: constantColor.withOpacity(0.85),
-                                            items: phoneType.map<
-                                                    DropdownMenuItem<String>>(
-                                                (String value) {
+                                            dropdownColor:
+                                                constantColor.withOpacity(0.85),
+                                            items: phoneType
+                                                .map<DropdownMenuItem<String>>(
+                                                    (String value) {
                                               return DropdownMenuItem<String>(
                                                 value: mapPhoneType[value]
                                                     .toString(),
@@ -194,9 +197,9 @@ class _ContactADDState extends State<ContactADD> {
                                                     style: kNormalTextStyle),
                                               );
                                             }).toList(),
-                                            onChanged: (String value) {
+                                            onChanged: (String? value) {
                                               setState(() {
-                                                _chosenValues[i] = value;
+                                                chosenValues[i] = value!;
                                               });
                                             },
                                           ),
@@ -216,29 +219,29 @@ class _ContactADDState extends State<ContactADD> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 IconButton(
-                                    icon: Icon(Icons.exposure_minus_1),
+                                    icon: const Icon(Icons.exposure_minus_1),
                                     color: constantColor,
                                     iconSize: 28.0,
                                     onPressed: () {
                                       setState(() {
                                         numPhones--;
                                         phone.removeLast();
-                                        _chosenValues.removeLast();
+                                        chosenValues.removeLast();
                                       });
                                     }),
                                 IconButton(
-                                    icon: Icon(Icons.add),
+                                    icon: const Icon(Icons.add),
                                     color: constantColor,
                                     iconSize: 28.0,
                                     onPressed: () {
                                       setState(() {
                                         numPhones++;
                                         phone.add(TextEditingController());
-                                        _chosenValues.add('1');
+                                        chosenValues.add('1');
                                       });
                                     }),
                               ]),
-                          SizedBox(height: 32),
+                          const SizedBox(height: 32),
                           _dottedBorder(
                             constantDots,
                             TextFormField(
@@ -256,7 +259,7 @@ class _ContactADDState extends State<ContactADD> {
                               controller: notes,
                             ),
                           ),
-                          SizedBox(height: 128),
+                          const SizedBox(height: 128),
                         ],
                       ),
                     ),
@@ -272,8 +275,8 @@ class _ContactADDState extends State<ContactADD> {
                   text: widget.updateMode ? 'UPDATE' : 'ADD',
                   color: constantColor,
                   press: () {
-                    if (contactKey.currentState.validate()) {
-                      uploadContact(name.text, email.text, phone, _chosenValues,
+                    if (contactKey.currentState!.validate()) {
+                      uploadContact(name.text, email.text, phone, chosenValues,
                           notes.text);
                     } else {
                       snackBarCustom(context, Colors.white, Colors.transparent,
@@ -287,14 +290,14 @@ class _ContactADDState extends State<ContactADD> {
     );
   }
 
-  Future<ContactModel> uploadContact(
+  Future<ContactModel?> uploadContact(
       String name,
       String email,
       List<TextEditingController> phones,
       List<String> types,
       String notes) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
+    String? token = prefs.getString("token");
     List<Map<String, dynamic>> phonesConverter() {
       List<Map<String, dynamic>> phoneList = [];
       for (int i = 0; i < phones.length; i++) {
@@ -318,24 +321,29 @@ class _ContactADDState extends State<ContactADD> {
     };
     final response = widget.updateMode
         ? await http.patch(
-            Uri.parse('${API_URL}contacts/${widget.id.toString()}'),
+            Uri.parse('${apiURL}contacts/${widget.id.toString()}'),
             headers: headersToken(token),
             body: json.encode({
               'email': email,
               'name': name,
               'notes': notes,
             }))
-        : await http.post(Uri.parse('${API_URL}contacts'),
+        : await http.post(Uri.parse('${apiURL}contacts'),
             headers: headersToken(token), body: json.encode(jsonBody));
-    print(jsonBody);
+    responseChecker(response);
+    return null;
+  }
+
+  ContactModel? responseChecker(response) {
     if (response.statusCode == 200) {
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => ContactsPage()),
+          MaterialPageRoute(
+              builder: (BuildContext context) => const ContactsPage()),
           (Route<dynamic> route) => false);
-      print(response.body);
+      // print(response.body);
       return ContactModel.fromJson(jsonDecode(response.body));
     } else {
-      print("The error message is: ${response.body}");
+      // print("The error message is: ${response.body}");
       snackBarCustom(
           context, Colors.white, Colors.transparent, response.body.toString());
     }
@@ -343,16 +351,14 @@ class _ContactADDState extends State<ContactADD> {
   }
 
   void checkUpdateMode() {
-    if (widget.nameUpdate != null) {
-      name.text = widget.nameUpdate;
-      email.text = widget.emailUpdate;
-      for (int i = 0; i<widget.phoneUpdate.length; i++) {
-        phone[i].text = widget.phoneUpdate[i];
-        _chosenValues.add(widget.typeUpdate[i].toString());
-        phone.add(TextEditingController());
-      }
-      notes.text = widget.notesUpdate;
+    name.text = widget.nameUpdate!;
+    email.text = widget.emailUpdate!;
+    for (int i = 0; i < widget.phoneUpdate!.length; i++) {
+      phone[i].text = widget.phoneUpdate![i];
+      chosenValues.add(widget.typeUpdate![i].toString());
+      phone.add(TextEditingController());
     }
+    notes.text = widget.notesUpdate!;
   }
 }
 
@@ -362,7 +368,11 @@ class ContactModel {
   final List<PhoneModel> phone;
   final String notes;
 
-  ContactModel({this.email, this.name, this.phone, this.notes});
+  ContactModel(
+      {required this.email,
+      required this.name,
+      required this.phone,
+      required this.notes});
 
   factory ContactModel.fromJson(Map<String, dynamic> json) {
     return ContactModel(
@@ -375,8 +385,8 @@ class ContactModel {
 }
 
 class PhoneModel {
-  final int type_id;
+  final int typeId;
   final String number;
 
-  PhoneModel({this.type_id = 1, this.number});
+  PhoneModel({this.typeId = 1, required this.number});
 }

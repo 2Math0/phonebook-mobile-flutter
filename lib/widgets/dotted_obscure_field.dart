@@ -1,14 +1,13 @@
-import 'package:conca/widgets/dotted_Field.dart';
-import 'package:flutter/material.dart';
-
 import 'package:conca/constants.dart';
+import 'package:conca/widgets/dotted_field.dart';
+import 'package:flutter/material.dart';
 
 class PasswordInputField extends StatefulWidget {
   final String hint;
   final IconData icon;
   final TextInputType inputType;
   final TextEditingController textController;
-  final String Function(String) validator;
+  final String? Function(String?)? validator;
   final Color bgColor;
   final Color borderColor;
   final Color textColor;
@@ -16,18 +15,21 @@ class PasswordInputField extends StatefulWidget {
   final Color cursorColor;
 
   const PasswordInputField(
-      {@required this.hint,
-      @required this.icon,
+      {Key? key,
+      required this.hint,
+      required this.icon,
       this.inputType = TextInputType.text,
-      this.textController,
+      required this.textController,
       this.validator,
       this.bgColor = kAccentColor,
       this.borderColor = Colors.black,
       this.textColor = Colors.black,
-      this.iconColor = Colors.black, this.cursorColor = kDarkAccentColor});
+      this.iconColor = Colors.black,
+      this.cursorColor = kDarkAccentColor})
+      : super(key: key);
 
   @override
-  _PasswordInputFieldState createState() => _PasswordInputFieldState();
+  State<PasswordInputField> createState() => _PasswordInputFieldState();
 }
 
 class _PasswordInputFieldState extends State<PasswordInputField> {
@@ -61,7 +63,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
             color: widget.iconColor.withOpacity(!hidePassword ? 0.4 : 1),
           ),
           hintText: widget.hint,
-          hintStyle: TextStyle(color: Colors.black38),
+          hintStyle: const TextStyle(color: Colors.black38),
           border: InputBorder.none,
         ),
         style: kNormalTextStyle.copyWith(color: widget.textColor),

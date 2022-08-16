@@ -13,38 +13,43 @@ finally, Navigates to Contacts page
  */
 
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:math' as math;
+
 import 'package:conca/Contacts/contacts.dart';
+import 'package:conca/constants.dart';
+import 'package:conca/registering/components/background_register.dart';
 import 'package:conca/widgets/dotted_input_field.dart';
 import 'package:conca/widgets/dotted_obscure_field.dart';
 import 'package:conca/widgets/rounded_button.dart';
 import 'package:conca/widgets/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:conca/constants.dart';
-import 'package:conca/registering/components/background_register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../Log_in/log_in_page.dart';
 
 class Register extends StatefulWidget {
+  const Register({Key? key}) : super(key: key);
+
   @override
-  _RegisterState createState() => _RegisterState();
+  State<Register> createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
   bool _isLoading = false;
   final signUpKey = GlobalKey<FormState>();
-  var errorMsg;
-  final TextEditingController emailController = new TextEditingController();
-  final TextEditingController passwordController = new TextEditingController();
+  dynamic errorMsg;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
         child: _isLoading
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(),
               )
             : Column(
@@ -65,7 +70,7 @@ class _RegisterState extends State<Register> {
                             ..color = Colors.transparent,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Sign Up',
                         style: TextStyle(
                           fontSize: 48,
@@ -83,7 +88,7 @@ class _RegisterState extends State<Register> {
                         ? (size.width * 0.5).roundToDouble()
                         : 300,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 60,
                   ),
                   Form(
@@ -104,7 +109,7 @@ class _RegisterState extends State<Register> {
                           borderColor: Colors.black.withOpacity(0.65),
                           cursorColor: kGearOrange,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 40,
                         ),
                         PasswordInputField(
@@ -120,17 +125,15 @@ class _RegisterState extends State<Register> {
                           borderColor: Colors.black.withOpacity(0.65),
                           cursorColor: kGearOrange,
                         ),
-                        SizedBox(
-                          height: 40,
-                        ),
+                        const SizedBox(height: 40),
                         RoundedButton(
                           text: 'Sign Up',
                           color: kGearOrange,
                           press: () {
-                            if (signUpKey.currentState.validate()) {
+                            if (signUpKey.currentState!.validate()) {
                               setState(() {
                                 _isLoading = true;
-                                Future.delayed(Duration(seconds: 12), () {
+                                Future.delayed(const Duration(seconds: 12), () {
                                   if (_isLoading == true) {
                                     _isLoading = false;
                                     snackBarCustom(context, Colors.white,
@@ -156,7 +159,7 @@ class _RegisterState extends State<Register> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Already Signed Up ?',
                         style: TextStyle(
                             fontSize: 16,
@@ -164,15 +167,6 @@ class _RegisterState extends State<Register> {
                             fontWeight: FontWeight.w600),
                       ),
                       ElevatedButton(
-                        child: Text(
-                          'Log In',
-                          style: TextStyle(
-                            fontFamily: 'Balsamiq',
-                            color: kGearOrange,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
                         style: ButtonStyle(
                             backgroundColor:
                                 MaterialStateProperty.all(Colors.transparent),
@@ -181,9 +175,18 @@ class _RegisterState extends State<Register> {
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      LogInPage()),
+                                      const LogInPage()),
                               (Route<dynamic> route) => false);
                         },
+                        child: const Text(
+                          'Log In',
+                          style: TextStyle(
+                            fontFamily: 'Balsamiq',
+                            color: kGearOrange,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -196,23 +199,23 @@ class _RegisterState extends State<Register> {
   void registerResponse(String email, pass) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     Map data = {'email': email, 'password': pass, 'name': getRandomString(7)};
-    var jsonResponse;
+    dynamic jsonResponse;
     var response = await http.post(
-      Uri.parse("${API_URL}register"),
+      Uri.parse("${apiURL}register"),
       body: json.encode(data),
       headers: kJsonAPP,
     );
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
-      print(jsonResponse);
+      log(jsonResponse);
       if (jsonResponse != null) {
         setState(() {
           _isLoading = false;
         });
         sharedPreferences.setString("token", jsonResponse['token']);
-        Navigator.of(context).pushAndRemoveUntil(
+        () => Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
-                builder: (BuildContext context) => ContactsPage()),
+                builder: (BuildContext context) => const ContactsPage()),
             (Route<dynamic> route) => false);
       }
     } else {
@@ -222,7 +225,7 @@ class _RegisterState extends State<Register> {
             errorMsg.toString());
         _isLoading = false;
       });
-      print("The error message is: ${response.body} ${emailController.text}");
+      log("The error message is: ${response.body} ${emailController.text}");
     }
   }
 }

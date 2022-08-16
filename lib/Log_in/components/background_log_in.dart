@@ -5,12 +5,12 @@ import 'package:flutter_svg/svg.dart';
 class Background extends StatefulWidget {
   final Widget child;
   const Background({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
   }) : super(key: key);
 
   @override
-  _BackgroundState createState() => _BackgroundState();
+  State<Background> createState() => _BackgroundState();
 }
 
 class _BackgroundState extends State<Background> {
@@ -75,7 +75,7 @@ class _BackgroundState extends State<Background> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         height: size.height,
         child: Stack(
@@ -83,7 +83,7 @@ class _BackgroundState extends State<Background> {
           children: <Widget>[
             // the Bottom circle
             AnimatedPositioned(
-              duration: Duration(milliseconds: 1000),
+              duration: const Duration(milliseconds: 1000),
               top: _bottomTop,
               left: -size.width * 0.2,
               child: SvgPicture.asset(
@@ -94,7 +94,7 @@ class _BackgroundState extends State<Background> {
             ),
             // Left circle
             AnimatedPositioned(
-              duration: Duration(milliseconds: 1800),
+              duration: const Duration(milliseconds: 1800),
               bottom: 0,
               right: _leftRight,
               child: SvgPicture.asset(
@@ -105,7 +105,7 @@ class _BackgroundState extends State<Background> {
             ),
             //Top right Edged blob
             AnimatedPositioned(
-              duration: Duration(milliseconds: 1500),
+              duration: const Duration(milliseconds: 1500),
               bottom: size.height * 0.4,
               left: _rightLeft,
               child: SvgPicture.asset(
